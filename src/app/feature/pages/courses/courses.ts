@@ -94,18 +94,50 @@ readonly XIcon: LucideIconData = X;
     }
   }
 
-  saveCourse(){
-    if(this.courseForm().valid()){
-      const id = this.courseService.courses().length+1;
-      this.courseForm.id().value.set(id);
-      this.courseService.courses.set([
-  ...this.courseService.courses(),
-  this.courseModel()
-]);
-      this.courseEditing.set(false);
-      this.courseModel.set(this.newCourseModel())
-    }
+  saveCourse() {
+
+  if (!this.courseForm().valid()) return;
+
+  const currentCourse = this.courseModel();
+
+  // NUEVO CURSO
+  if (!currentCourse.id || currentCourse.id === 0) {
+
+    const newId = this.courseService.courses().length + 1;
+
+    const newCourse: Course = {
+      ...currentCourse,
+      id: newId
+    };
+
+    // Actualiza el model activo
+    this.courseModel.set(newCourse);
+
+    // Agrega el nuevo curso
+    this.courseService.courses.update(courses => [
+      ...courses,
+      newCourse
+    ]);
+
+  } else {
+
+    // ACTUALIZAR CURSO EXISTENTE
+    this.courseService.courses.update(courses =>
+      courses.map(course =>
+        course.id === currentCourse.id
+          ? currentCourse
+          : course
+      )
+    );
+
   }
+
+  // Cierra editor
+  this.courseEditing.set(false);
+
+  // Limpia formulario/model
+  this.courseModel.set(structuredClone(this.newCourseModel()));
+}
  createNewSession() {
 
   const activeCourse = this.activeCourse();
@@ -176,6 +208,122 @@ onSessionChange(){
       )
     );
 }
+editCourse(course:Course){
+  this.courseEditing.set(true);
+  this.courseModel.set(course)
+}
+closeCourseModal(){
+  this.courseEditing.set(false);
+  this.courseModel.set(structuredClone(this.newCourseModel()));
+}
+deleteCourse(courseId: number) {
+  const confirm = window.confirm("Está seguro que desea eliminar el curso?")
+  if(!confirm){
+    return;
+  }
+
+  // Elimina el curso del array global
+  this.courseService.courses.update(courses =>
+    courses.filter(course => course.id !== courseId)
+  );
+
+  // Si el curso eliminado era el activo
+  if (this.activeCourse()?.id === courseId) {
+    this.activeCourse.set(null);
+    this.activeSession.set(null);
+  }
+  this.closeCourseModal()
+
+}
+downloadNoteAsFile() {
+
+  const session = this.activeSession();
+
+  if (!session) return;
+
+  const content = session.notes || '';
+
+  const blob = new Blob([content], {
+    type: 'text/plain;charset=utf-8'
+  });
+
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+
+  a.href = url;
+
+  // Nombre del archivo
+  const safeName = session.name
+    .replace(/[^a-z0-9]/gi, '_')
+    .toLowerCase();
+
+  a.download = `${safeName || 'apuntes'}.txt`;
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  document.body.removeChild(a);
+
+  window.URL.revokeObjectURL(url);
+}
+copyNoteToClipboard() {
+
+  const session = this.activeSession();
+
+  if (!session || !session.notes) return;
+
+  navigator.clipboard.writeText(session.notes);
+
+  console.log('Apuntes copiados');
+}
+deleteSession(sessionId: number) {
+  const confirm = window.confirm('Esta seguro que desea eliminar la sesion?')
+  if(!confirm){
+    return;
+  }
+
+  const activeCourse = this.activeCourse();
+
+  if (!activeCourse) return;
+
+  // Filtra las sesiones
+  const updatedSessions = activeCourse.sessions.filter(
+    session => session.id !== sessionId
+  );
+
+  // Curso actualizado
+  const updatedCourse: Course = {
+    ...activeCourse,
+    sessions: updatedSessions
+  };
+
+  // Actualiza curso activo
+  this.activeCourse.set(updatedCourse);
+
+  // Actualiza array global
+  this.courseService.courses.update(courses =>
+    courses.map(course =>
+      course.id === updatedCourse.id
+        ? updatedCourse
+        : course
+    )
+  );
+
+  console.log(this.activeSession()?.id)
+  console.log(sessionId)
+  console.log(this.activeSession()?.id === sessionId)
+  // Si la sesión eliminada era la activa
+  if (this.activeSession()?.id === sessionId) {
+    setTimeout(()=>{
+
+    this.activeSession.set(null);
+    },150)
+    console.log(this.activeSession())
+  }
+
+}
 formatDate(dateString: string): string {
 
   if (!dateString) return 'Sin fecha';
@@ -201,6 +349,17 @@ formatDate(dateString: string): string {
   const month = months[date.getMonth()];
 
   return `${day} de ${month}`;
+}
+formatTime(dateString: string): string {
+
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return `${hours}:${minutes}`;
 }
 
 getDayShort(dateString: string): string {

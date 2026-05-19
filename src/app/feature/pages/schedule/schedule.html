@@ -1,25 +1,76 @@
- <!-- ================= VIEW: SCHEDULE ================= -->
-            <section id="view-schedule" class="view-section h-full flex flex-col">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Horario Semanal</h2>
-                        <p class="text-slate-500">Gestiona tus clases. Haz clic en una sesión actual para <span class="font-bold text-slate-800">marcar asistencia</span>.</p>
-                    </div>
-                </div>
+<!-- ================= VIEW: SCHEDULE ================= -->
+<section id="view-schedule" class="view-section h-full flex flex-col">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-slate-900">Horario Semanal</h2>
+            <p class="text-slate-500">Gestiona tus clases. Haz clic en una sesión actual para <span class="font-bold text-slate-800">marcar asistencia</span>.</p>
+        </div>
+    </div>
 
-                <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                    <!-- Calendar Header -->
-                    <div class="grid grid-cols-6 border-b border-slate-200 bg-slate-50">
-                        <div class="p-3 text-center text-xs font-semibold text-slate-400 border-r border-slate-200">Hora</div>
-                        <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Lun</div>
-                        <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Mar</div>
-                        <div class="p-3 text-center text-sm font-medium text-primary-600 bg-primary-50 border-r border-slate-200">Mie</div>
-                        <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Jue</div>
-                        <div class="p-3 text-center text-sm font-medium text-slate-700">Vie</div>
+    <div class="flex-1 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+        <!-- Calendar Header: Lun - Dom -->
+        <div class="grid grid-cols-8 border-b border-slate-200 bg-slate-50">
+            <div class="p-3 text-center text-xs font-semibold text-slate-400 border-r border-slate-200">Hora</div>
+            <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Lun</div>
+            <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Mar</div>
+            <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Mié</div>
+            <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Jue</div>
+            <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Vie</div>
+            <div class="p-3 text-center text-sm font-medium text-slate-700 border-r border-slate-200">Sáb</div>
+            <div class="p-3 text-center text-sm font-medium text-slate-700">Dom</div>
+        </div>
+
+        <!-- Grid Body -->
+        <div class="flex-1 overflow-y-auto relative">
+
+            <!-- Column background stripes -->
+            <div class="absolute inset-0 grid grid-cols-8 pointer-events-none divide-x divide-slate-100">
+                <div class="bg-slate-50/50"></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <!-- Hour Rows -->
+            @for(hour of scheduleHours; track $index) {
+                <div class="relative z-10 flex border-b border-slate-100 h-24 items-start">
+
+                    <!-- Hour Label -->
+                    <div class="w-[12.5%] text-[10px] font-bold text-slate-400 text-center py-6 uppercase shrink-0">
+                        {{ hour }}
                     </div>
 
-                    <div class="flex-1 overflow-y-auto relative" id="schedule-grid-body">
-                        <!-- Generado dinámicamente -->
+                    <!-- Events Container (7 días = 87.5% del ancho) -->
+                    <div class="w-[87.5%] relative h-full">
+                        @for(course of courses$(); track course.id) {
+                            @for(session of getSessionsForSlot(course, hour); track session.id) {
+                                <div
+                                    (click)="openSpecificNote(course.id, session.id)"
+                                     class="absolute top-2 bottom-2 rounded-r p-2 overflow-hidden shadow-sm hover:scale-105 transition-transform cursor-pointer group border-l-4"
+    [style.border-color]="course.color"
+    [style.background-color]="getSessionBgColor(course.color)"
+    [style.left.%]="getSessionLeftPosition(session)"
+                                    style="width: 13%"
+                                >
+                                    <p class="text-[9px] font-bold uppercase leading-none text-slate-400 truncate">{{ course.name }}</p>
+                                    <p class="text-[10px] font-black uppercase leading-tight truncate mt-0.5">{{ session.name }}</p>
+                                    <p class="text-[9px] opacity-85 mt-0.5 truncate">{{ session.classRoom }}</p>
+                                    <p class="text-[8px] opacity-75 leading-tight">{{ getHourFromDatetime(session.startDate) }} - {{ getHourFromDatetime(session.endDate) }}</p>
+                                    <div class="absolute bottom-1 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <lucide-angular [img]="Edit3Icon" class="w-3.5 h-3.5"></lucide-angular>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
+
                 </div>
-            </section>
+            }
+
+        </div>
+    </div>
+</section>

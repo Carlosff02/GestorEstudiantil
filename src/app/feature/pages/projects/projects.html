@@ -1,0 +1,110 @@
+     <!-- [SECCIÓN EN CONSTRUCCIÓN] (Activa por defecto para 'Horario') -->
+                <div id="view-under-construction" class="h-full flex flex-col items-center justify-center max-w-2xl mx-auto text-center">
+
+                    <!-- Ilustración Animada de Constructor en Acción (SVG Integrado) -->
+                    <div class="relative w-80 h-72 mx-auto mb-6 flex items-center justify-center">
+
+                        <!-- Glow de fondo decorativo -->
+                        <div class="absolute w-60 h-60 bg-blue-100/50 rounded-full filter blur-3xl animate-pulse-light -z-10"></div>
+
+                        <svg viewBox="0 0 200 200" class="w-64 h-64 drop-shadow-xl">
+                            <!-- Engranaje decorativo de fondo (Izquierda) -->
+                            <g class="animate-gear-slow text-slate-300">
+                                <circle cx="45" cy="50" r="16" fill="none" stroke="currentColor" stroke-width="5" stroke-dasharray="8 3" />
+                                <circle cx="45" cy="50" r="8" fill="white" stroke="currentColor" stroke-width="3" />
+                            </g>
+
+                            <!-- Engranaje rápido de fondo (Derecha) -->
+                            <g class="animate-gear-fast text-blue-300">
+                                <circle cx="160" cy="45" r="12" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="6 2" />
+                                <circle cx="160" cy="45" r="6" fill="white" stroke="currentColor" stroke-width="2" />
+                            </g>
+
+                            <!-- Estructura o Soporte base de construcción -->
+                            <rect x="30" y="155" width="140" height="8" rx="4" fill="#334155" />
+                            <line x1="55" y1="155" x2="55" y2="135" stroke="#334155" stroke-width="5" />
+                            <line x1="145" y1="155" x2="145" y2="135" stroke="#334155" stroke-width="5" />
+                            <line x1="40" y1="135" x2="160" y2="135" stroke="#475569" stroke-width="6" stroke-linecap="round" />
+
+                            <!-- Pantalla de la aplicación en desarrollo -->
+                            <g class="animate-float-workspace">
+                                <rect x="50" y="65" width="100" height="65" rx="8" fill="white" stroke="#e2e8f0" stroke-width="3" />
+
+                                <!-- Barra superior estilo Navegador -->
+                                <rect x="50" y="65" width="100" height="15" rx="4" fill="#f8fafc" />
+                                <circle cx="58" cy="72.5" r="1.5" fill="#ef4444" />
+                                <circle cx="63" cy="72.5" r="1.5" fill="#f59e0b" />
+                                <circle cx="68" cy="72.5" r="1.5" fill="#10b981" />
+
+                                <!-- Contenido simulando líneas de código / maqueta -->
+                                <rect x="58" y="88" width="50" height="4" rx="2" fill="#3b82f6" class="animate-glow-line" />
+                                <rect x="58" y="96" width="75" height="4" rx="2" fill="#94a3b8" />
+                                <rect x="58" y="104" width="35" height="4" rx="2" fill="#10b981" />
+                                <rect x="58" y="112" width="60" height="4" rx="2" fill="#a855f7" />
+                            </g>
+
+                            <!-- Persona de construcción -->
+                            <g transform="translate(65, 110)">
+                                <!-- Cuerpo del Desarrollador / Ingeniero -->
+                                <path d="M18 42 C18 25, 52 25, 52 42 L58 60 L12 60 Z" fill="#1e3a8a" />
+                                <!-- Cuello -->
+                                <rect x="31" y="21" width="8" height="8" fill="#fed7aa" rx="1" />
+                                <!-- Rostro -->
+                                <circle cx="35" cy="16" r="10" fill="#fed7aa" />
+                                <!-- Casco protector interactivo -->
+                                <path d="M22 13 C22 4, 48 4, 48 13 L53 16 L17 16 Z" fill="#f59e0b" class="cursor-pointer hover:fill-amber-400 transition-all" onclick="clickCasco()" />
+                                <rect x="31" y="2" width="8" height="4" fill="#d97706" rx="1" />
+
+                                <!-- Brazo izquierdo oscilante con una herramienta -->
+                                <g class="animate-hammer-worker">
+                                    <line x1="15" y1="35" x2="3" y2="48" stroke="#1e3a8a" stroke-width="7" stroke-linecap="round" />
+                                    <!-- Llave de tuercas -->
+                                    <path d="M-3 46 L-10 58 M-14 56 L-10 50 M-14 50 A 4.5 4.5 0 1 1 -8 56" stroke="#475569" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                                </g>
+
+                                <!-- Brazo derecho estático sosteniendo plano -->
+                                <g class="animate-arm-worker">
+                                    <line x1="50" y1="35" x2="60" y2="46" stroke="#1e3a8a" stroke-width="7" stroke-linecap="round" />
+                                </g>
+                            </g>
+                        </svg>
+
+                        <!-- Cono reflectante flotante -->
+                        <div class="absolute bottom-6 right-10 text-orange-500 animate-bounce">
+                            <i data-lucide="cone" style="width: 26px; height: 26px;"></i>
+                        </div>
+                    </div>
+
+                    <!-- Etiquetas y textos explicativos -->
+                    <span class="text-xs font-bold tracking-widest text-blue-600 bg-blue-50 border border-blue-200/50 px-3.5 py-1.5 rounded-full uppercase inline-block mb-4">
+                        Desarrollo en Proceso
+                    </span>
+                    <h2 class="text-3xl font-extrabold text-[#0f172a] tracking-tight mb-3">
+                        Módulo en Construcción
+                    </h2>
+                    <p class="text-slate-500 text-sm max-w-md mx-auto leading-relaxed mb-8">
+                        Estamos programando una interfaz para gestionar tus proyectos de forma impecable. ¡Estará lista muy pronto!
+                    </p>
+
+                    <!-- Acciones interactivas rápidas -->
+                    <div class="flex items-center gap-3 justify-center">
+                        <button [routerLink]="'/home/courses'" class="inline-flex items-center gap-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold text-xs px-5 py-3 rounded-xl shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 active:scale-95 transition-all">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Ver mis cursos disponibles
+                        </button>
+                        <!-- <button onclick="boostConstruction()" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-[#475569] font-semibold text-xs px-4 py-3 rounded-xl transition-all">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i> ¡Acelerar trabajo!
+                        </button> -->
+                    </div>
+
+                    <!-- Tarjeta Informativa de Ayuda -->
+                    <div class="mt-8 p-4 bg-slate-50 border border-[#e2e8f0] rounded-2xl max-w-md text-left flex items-start gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-[#0f172a]">¿Necesitas organizar tu semana ya?</h4>
+                            <p class="text-[11px] text-[#64748b] mt-0.5 leading-relaxed">Puedes consultar temporalmente los horarios de clases de cada asignatura desde la pestaña "Mis Cursos".</p>
+                        </div>
+                    </div>
+
+                </div>

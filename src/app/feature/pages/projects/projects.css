@@ -1,0 +1,38 @@
+/* Animaciones para dar dinamismo a la persona construyendo */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes hammer-swing {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-30deg); }
+        }
+        @keyframes arm-holding {
+            0%, 100% { transform: rotate(0deg) translate(0, 0); }
+            50% { transform: rotate(3deg) translate(1px, -1px); }
+        }
+        @keyframes spin-clockwise {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes spin-counter {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 0.15; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(1.08); }
+        }
+        @keyframes line-glow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* Clases auxiliares para enlazar las animaciones */
+        .animate-float-workspace { animation: float 5s ease-in-out infinite; }
+        .animate-hammer-worker { animation: hammer-swing 1.2s ease-in-out infinite; transform-origin: 45px 55px; }
+        .animate-arm-worker { animation: arm-holding 2.5s ease-in-out infinite; transform-origin: 30px 40px; }
+        .animate-gear-fast { animation: spin-clockwise 5s linear infinite; transform-origin: center; }
+        .animate-gear-slow { animation: spin-counter 15s linear infinite; transform-origin: center; }
+        .animate-pulse-light { animation: pulse-soft 3s ease-in-out infinite; }
+        .animate-glow-line { animation: line-glow 1.5s ease-in-out infinite; }

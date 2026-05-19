@@ -19,7 +19,9 @@
             <div class="p-5">
               <div class="flex justify-between items-start mb-2 gap-2">
                 <h3 class="font-bold text-lg text-slate-800 hover:text-primary-600 cursor-pointer transition-colors leading-tight">{{course.name}}</h3>
-                <button class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors" title="Configurar Curso">
+                <button
+                (click)="editCourse(course)"
+                class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors" title="Configurar Curso">
                   <lucide-angular [img]="SettingsIcon" class="w-4 h-4"></lucide-angular>
                 </button>
               </div>
@@ -29,19 +31,26 @@
 
               <div class="space-y-1 border-t border-slate-50 pt-3">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sesiones Programadas:</p>
+                @if(!course?.sessions?.length){
                 <p class="text-xs text-slate-400 italic">Sin sesiones programadas en calendario</p>
+                } @else{
+                  @for(session of course.sessions; track $index){
+                    @if(session.startDate!==''){
                 <div class="flex items-center gap-1.5 text-xs text-slate-600">
-                  <span class="font-semibold text-[10px] bg-slate-100 text-slate-700 px-1 py-0.5 rounded uppercase">getDayName(s.day)</span>
-                  <span class="truncate max-w-[80px]">s.title</span>
-                  <span class="text-slate-400">s.start-s.end (s.room || 'Aula')</span>
+                  <span class="font-semibold text-[10px] bg-slate-100 text-slate-700 px-1 py-0.5 rounded uppercase">{{getDayShort(session.startDate)}}</span>
+                  <span [title]="session.name" class="truncate max-w-[80px]">{{session.name}}</span>
+                  <span class="text-slate-400">{{formatTime(session.startDate)}}-{{formatTime(session.endDate)}} (Aula {{session.classRoom}})</span>
                 </div>
+                }
+                }
+                }
               </div>
             </div>
           </div>
 
           <div class="p-5 border-t border-slate-50 bg-slate-50/50 flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-500 flex items-center gap-1">
-              <lucide-angular [img]="FileTextIcon" class="w-4 h-4 text-slate-400"></lucide-angular> c.notes.length Sesiones
+              <lucide-angular [img]="FileTextIcon" class="w-4 h-4 text-slate-400"></lucide-angular> {{course.sessions.length}} Sesiones
             </span>
             <button (click)="activeCourse.set(course)" class="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center gap-0.5">
               Ver apuntes <lucide-angular [img]="ChevronRightIcon" class="w-4 h-4"></lucide-angular>
@@ -92,7 +101,7 @@
             id="sidemenu-item-${note.id}" class="p-3 rounded-xl cursor-pointer border transition-all flex flex-col gap-1 ${isActive ? 'bg-primary-50 border-primary-200 shadow-sm' : 'bg-white border-slate-100 hover:bg-slate-50'}">
               <div class="flex justify-between items-start gap-2">
                 <h4 class="text-xs font-bold note-sidemenu-title ${isActive ? 'text-primary-800' : 'text-slate-800'}">{{session.name}}</h4>
-                <button onclick="deleteSessionNote(event, '${note.id}')" class="text-slate-300 hover:text-rose-500 transition-colors p-0.5" title="Eliminar sesión">
+                <button (click)="deleteSession(session.id)" class="text-slate-300 hover:text-rose-500 transition-colors p-0.5" title="Eliminar sesión">
                   <lucide-angular [img]="Trash2Icon" class="w-3.5 h-3.5"></lucide-angular>
                 </button>
               </div>
@@ -105,24 +114,26 @@
         </div>
       </div>
       @let sessionActive = activeSession();
-      @if(sessionActive){
+      @if(sessionActive!==null){
       <!-- Right Panel: Editor -->
-      <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+      <div
+        [class.hidden]="activeSession()===null"
+      class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
         <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
           <div class="flex items-center gap-2 text-xs text-slate-500">
             <lucide-angular [img]="InfoIcon" class="w-3.5 h-3.5 text-primary-500"></lucide-angular>
             <span id="note-last-edited-label">Los apuntes se autoguardan automáticamente</span>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="copyNoteToClipboard()" class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5" title="Copiar apuntes">
+            <button (click)="copyNoteToClipboard()" class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5" title="Copiar apuntes">
               <lucide-angular [img]="CopyIcon" class="w-4 h-4"></lucide-angular> <span class="hidden sm:inline">Copiar</span>
             </button>
-            <button onclick="downloadNoteAsFile()" class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5" title="Descargar apuntes como .txt">
+            <button (click)="downloadNoteAsFile()" class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5" title="Descargar apuntes como .txt">
               <lucide-angular [img]="DownloadIcon" class="w-4 h-4"></lucide-angular> <span class="hidden sm:inline">Descargar (.txt)</span>
             </button>
-            <button onclick="saveCurrentNoteChanges(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
+            <!-- <button onclick="saveCurrentNoteChanges(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
               <lucide-angular [img]="SaveIcon" class="w-4 h-4"></lucide-angular> Guardar Todo
-            </button>
+            </button> -->
           </div>
         </div>
 
@@ -204,7 +215,7 @@
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden">
       <div class="p-6 border-b border-slate-100 flex items-center justify-between">
         <h3 id="course-modal-title" class="text-lg font-bold text-slate-800">Agregar Curso</h3>
-        <button onclick="closeCourseModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100">
+        <button (click)="closeCourseModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100">
           <lucide-angular [img]="XIcon" class="w-5 h-5"></lucide-angular>
         </button>
       </div>
@@ -231,11 +242,13 @@
       </div>
 
       <div class="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-        <button onclick="deleteCourseFromModal()" id="btn-modal-delete-course" class="text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors hidden">
+        <button
+        [class.hidden]="courseModel().id===0||courseModel().id===null"
+        (click)="deleteCourse(courseModel().id)" id="btn-modal-delete-course" class="text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors">
           Eliminar Curso
         </button>
         <div class="flex gap-2 ml-auto">
-          <button onclick="closeCourseModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 transition-colors text-xs font-semibold">
+          <button (click)="closeCourseModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 transition-colors text-xs font-semibold">
             Cancelar
           </button>
           <button (click)="saveCourse()" class="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white transition-colors text-xs font-bold shadow-sm">
