@@ -1,0 +1,80 @@
+ <!-- ================= VIEW: DASHBOARD ================= -->
+            <section id="view-dashboard" class="view-section block space-y-6">
+                <!-- Welcome Banner -->
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">¡Hola de nuevo, Alex! 👋</h2>
+                        <p class="text-slate-500 mt-1">Hoy tienes clases programadas y apuntes listos para redactar o repasar.</p>
+                    </div>
+                    <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ciclo Activo 2026
+                    </div>
+                </div>
+
+                <!-- Metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Apuntes de Sesiones</p>
+                            <h3 id="metric-notes-count" class="text-2xl font-bold text-slate-800">0</h3>
+                            <p class="text-xs font-medium text-emerald-500 mt-2 flex items-center gap-1">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Organizado por clase
+                            </p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                            <i data-lucide="file-text" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Cursos Registrados</p>
+                            <h3 id="metric-courses-count" class="text-2xl font-bold text-slate-800">{{courses$().length}}</h3>
+                            <p class="text-xs font-medium text-indigo-500 mt-2">Con horarios asignados</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                            <i data-lucide="library" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 mb-1">Tiempo de Estudio</p>
+                            <h3 class="text-2xl font-bold text-slate-800">24.5h</h3>
+                            <p class="text-xs font-medium text-slate-400 mt-2">Medido con cronómetro</p>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Today's Schedule -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="calendar-days" class="w-5 h-5 text-primary-500"></i> Clases del Día (Hoy)
+                            </h3>
+                            <button onclick="switchView('schedule')" class="text-sm text-primary-600 font-medium hover:underline">Ver horario completo</button>
+                        </div>
+                        <div class="space-y-4" id="dashboard-today-classes">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Recent Session Notes -->
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <i data-lucide="history" class="w-5 h-5 text-indigo-500"></i> Apuntes Recientes
+                            </h3>
+                            <div class="space-y-4" id="recent-notes-container">
+                                <!-- Injected by JS -->
+                            </div>
+                        </div>
+                        <button onclick="switchView('courses')" class="w-full mt-4 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-100 transition-colors">
+                            Ver todos mis cursos
+                        </button>
+                    </div>
+                </div>
+            </section>
