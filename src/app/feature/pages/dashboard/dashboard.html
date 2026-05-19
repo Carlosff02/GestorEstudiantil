@@ -49,7 +49,6 @@
 
     <!-- Dashboard Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Today's Schedule -->
         <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2">
@@ -58,7 +57,6 @@
                 <button onclick="switchView('schedule')" class="text-sm text-primary-600 font-medium hover:underline">Ver horario completo</button>
             </div>
             <div class="space-y-4" id="dashboard-today-classes">
-                <!-- Injected by JS -->
                  @if(getTodaySessions().length === 0){
 
   <div class="text-center py-8">
@@ -87,7 +85,6 @@
         class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-white hover:shadow-md transition-all"
       >
 
-        <!-- Horas -->
         <div class="text-center min-w-[60px]">
 
           <p class="text-xs font-bold text-slate-400 uppercase">
@@ -156,27 +153,28 @@
       </div>
 
     }
-
+<button [routerLink]="'/home/courses'" class="w-full mt-4 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-100 transition-colors">
+                Ver todos mis cursos
+            </button>
   </div>
 
 }
             </div>
         </div>
 
-        <!-- Recent Session Notes -->
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between">
+       <!-- <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 flex flex-col justify-between">
             <div>
                 <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
                     <lucide-angular [img]="HistoryIcon" class="w-5 h-5 text-indigo-500"></lucide-angular> Apuntes Recientes
                 </h3>
                 <div class="space-y-4" id="recent-notes-container">
-                    <!-- Injected by JS -->
+
 
                 </div>
             </div>
             <button [routerLink]="'/home/courses'" class="w-full mt-4 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-100 transition-colors">
                 Ver todos mis cursos
             </button>
-        </div>
+        </div>-->
     </div>
 </section>

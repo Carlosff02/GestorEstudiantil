@@ -24,9 +24,7 @@ export class Schedule {
     '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'
   ];
 
-  // Ya no necesitas colorClassMap, usamos el hex directamente
 getColorClasses(color: string): string {
-  // Si es hex, devolvemos clases genéricas y el color lo ponemos por style
   return 'bg-opacity-10 border-l-4 text-slate-700 hover:brightness-95';
 }
 
@@ -35,27 +33,23 @@ getSessionBorderColor(color: string): string {
 }
 
 getSessionBgColor(color: string): string {
-  return color + '20'; // hex con ~12% opacidad
+  return color + '20';
 }
 
-  // Parsea "2026-05-19T20:46" sin conversión UTC
+
   private parseDatetime(datetime: string): { hour: string; day: number } {
     if (!datetime) return { hour: '', day: -1 };
     const [datePart, timePart] = datetime.split('T');
     const hour = timePart?.substring(0, 5) ?? '';
     const [year, month, dayNum] = datePart.split('-').map(Number);
-    // Construir con Date.UTC para evitar offset de zona horaria
+
     const date = new Date(year, month - 1, dayNum);
-    // getDay(): 0=Dom,1=Lun,2=Mar,3=Mie,4=Jue,5=Vie,6=Sab
-    // Convertimos a 0=Lun,1=Mar,2=Mie,3=Jue,4=Vie,5=Sab,6=Dom
     const jsDay = date.getDay();
     const day = jsDay === 0 ? 6 : jsDay - 1;
     return { hour, day };
   }
 
 
-
- // Extrae solo la hora "HH" de "2026-05-19T20:46" → "20"
 private getHourOnly(datetime: string): string {
   if (!datetime) return '';
   return datetime.split('T')[1]?.substring(0, 2) ?? '';
@@ -66,7 +60,6 @@ getHourFromDatetime(datetime: string): string {
   return datetime.split('T')[1]?.substring(0, 5) ?? '';
 }
 
-// Compara solo la hora HH, ignorando minutos
 getSessionsForSlot(course: Course, hour: string): Session[] {
   const slotHour = hour.substring(0, 2); // "20:00" → "20"
   return course.sessions.filter(s => this.getHourOnly(s.startDate) === slotHour);
@@ -74,11 +67,9 @@ getSessionsForSlot(course: Course, hour: string): Session[] {
 
   getSessionLeftPosition(session: Session): number {
     const { day } = this.parseDatetime(session.startDate);
-    // 7 columnas (Lun-Dom), cada una ocupa ~14.28% del contenedor
     return day * 14.28;
   }
 
   openSpecificNote(courseId: number, sessionId: number): void {
-    // tu lógica de navegación aquí
   }
 }
