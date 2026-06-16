@@ -1,0 +1,231 @@
+<div class="auth-portal" [class]="a11yClass()" [lang]="uiIdioma()">
+
+  <!--
+    Enlace de salto (skip link): invisible hasta que recibe el foco con Tab.
+    Permite a cualquier persona que navegue por teclado saltar directo
+    al panel de idioma/accesibilidad sin recorrer todo el formulario.
+  -->
+  <a href="#a11y-toolbar" class="skip-link" (click)="focusToolbar($event)">
+    {{ t().skipLink }}
+  </a>
+
+  <div class="auth-portal__backdrop"></div>
+
+  <!--
+    Panel de preferencias de VISUALIZACIÓN de esta página
+    (idioma de la interfaz + perfil de accesibilidad visual).
+    Es independiente de los selects del formulario de registro,
+    que guardan la preferencia de la CUENTA.
+
+    Accesibilidad por teclado:
+      - Tab / Shift+Tab para moverse entre los selectores.
+      - Flechas ↑ / ↓ (o Alt+↓ para abrir la lista) para cambiar la opción.
+      - Enter o Espacio para confirmar la opción resaltada.
+    El texto de ayuda debajo de los selectores repite esta indicación
+    y un anuncio "aria-live" confirma el cambio para lectores de pantalla.
+  -->
+  <section id="a11y-toolbar" class="a11y-toolbar" [attr.aria-label]="t().toolbarTitle">
+    <h2 class="a11y-toolbar__title">
+      <lucide-icon [img]="eyeIcon" [size]="16" aria-hidden="true" />
+      {{ t().toolbarTitle }}
+    </h2>
+
+    <div class="a11y-toolbar__fields">
+      <div class="a11y-toolbar__field">
+        <label class="a11y-toolbar__label" for="ui-idioma">
+          <lucide-icon [img]="globeIcon" [size]="14" aria-hidden="true" />
+          {{ t().toolbarIdiomaLabel }}
+        </label>
+        <select #uiIdiomaSelect id="ui-idioma" name="uiIdioma" class="a11y-toolbar__select"
+                [ngModel]="uiIdioma()"
+                (ngModelChange)="onIdiomaChange($event)"
+                aria-describedby="a11y-toolbar-hint">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+
+      <div class="a11y-toolbar__field">
+        <label class="a11y-toolbar__label" for="ui-a11y">
+          {{ t().toolbarA11yLabel }}
+        </label>
+        <select id="ui-a11y" name="uiA11y" class="a11y-toolbar__select"
+                [ngModel]="uiPerfilAccesibilidad()"
+                (ngModelChange)="onA11yChange($event)"
+                aria-describedby="a11y-toolbar-hint">
+          <option value="">{{ t().a11yNone }}</option>
+          <option value="protanopia">{{ t().a11yProtanopia }}</option>
+          <option value="deuteranopia">{{ t().a11yDeuteranopia }}</option>
+          <option value="tritanopia">{{ t().a11yTritanopia }}</option>
+          <option value="baja_vision">{{ t().a11yBajaVision }}</option>
+          <option value="ceguera">{{ t().a11yCeguera }}</option>
+        </select>
+      </div>
+    </div>
+
+    <p id="a11y-toolbar-hint" class="a11y-toolbar__hint">
+      {{ t().toolbarHint }}
+    </p>
+  </section>
+
+  <!-- Región viva: anuncia los cambios de idioma/accesibilidad a lectores de pantalla -->
+  <div class="sr-only" role="status" aria-live="polite">{{ liveMessage() }}</div>
+
+  <div class="auth-card">
+
+    <!-- Brand header -->
+    <div class="auth-card__header">
+      <div class="auth-card__icon-wrap">
+        <lucide-icon [img]="layersIcon" [size]="28" class="auth-card__icon" />
+      </div>
+      <h2 class="auth-card__brand">{{ t().brand }}</h2>
+      <p class="auth-card__tagline">{{ t().tagline }}</p>
+    </div>
+
+    <!-- Tab selector -->
+    <div class="auth-card__tabs">
+      <button type="button" class="auth-card__tab-btn"
+              [class.auth-card__tab-btn--active]="activeTab() === 'login'"
+              (click)="switchTab('login')">
+        {{ t().tabLogin }}
+      </button>
+      <button type="button" class="auth-card__tab-btn"
+              [class.auth-card__tab-btn--active]="activeTab() === 'register'"
+              (click)="switchTab('register')">
+        {{ t().tabRegister }}
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    @if (activeTab() === 'login') {
+      <form class="auth-card__form" (ngSubmit)="handleLogin()" #loginFormRef="ngForm">
+
+        <div class="field">
+          <label class="field__label" for="login-email">{{ t().loginEmailLabel }}</label>
+          <div class="field__input-wrap">
+            <lucide-icon [img]="mailIcon" [size]="16" class="field__icon" aria-hidden="true" />
+            <input  id="login-email" type="email" name="email" required
+                   [placeholder]="t().loginEmailPlaceholder" class="field__input"
+                   [(ngModel)]="loginForm.correo" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="login-password">{{ t().loginPasswordLabel }}</label>
+          <div class="field__input-wrap">
+            <lucide-icon [img]="lockIcon" [size]="16" class="field__icon" aria-hidden="true" />
+            <input id="login-password" type="password" name="password" required
+                   [placeholder]="t().loginPasswordPlaceholder" class="field__input"
+                   [(ngModel)]="loginForm.password" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn--primary">
+          <span>{{ t().loginSubmit }}</span>
+          <lucide-icon [img]="arrowRightIcon" [size]="16" aria-hidden="true" />
+        </button>
+
+      </form>
+    }
+
+    <!-- Register Form -->
+    @if (activeTab() === 'register') {
+      <form class="auth-card__form" (ngSubmit)="handleRegister()" #registerFormRef="ngForm">
+
+        <div class="field">
+          <label class="field__label" for="reg-nombres">{{ t().regNombresLabel }}</label>
+          <div class="field__input-wrap">
+            <lucide-icon [img]="userIcon" [size]="16" class="field__icon" aria-hidden="true" />
+            <input id="reg-nombres" type="text" name="nombres" required
+                   [placeholder]="t().regNombresPlaceholder" class="field__input"
+                   [(ngModel)]="registerForm.nombres" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="reg-apellidos">{{ t().regApellidosLabel }}</label>
+          <div class="field__input-wrap">
+            <lucide-icon [img]="userPlusIcon" [size]="16" class="field__icon" aria-hidden="true" />
+            <input id="reg-apellidos" type="text" name="apellidos" required
+                   [placeholder]="t().regApellidosPlaceholder" class="field__input"
+                   [(ngModel)]="registerForm.apellidos" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="reg-email">{{ t().regEmailLabel }}</label>
+          <div class="field__input-wrap">
+            <lucide-icon [img]="mailIcon" [size]="16" class="field__icon" aria-hidden="true" />
+            <input id="reg-email" type="email" name="email" required
+                   [placeholder]="t().regEmailPlaceholder" class="field__input"
+                   [(ngModel)]="registerForm.correo" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="reg-password">{{ t().regPasswordLabel }}</label>
+          <div class="field__input-wrap">
+            <lucide-icon [img]="lockIcon" [size]="16" class="field__icon" aria-hidden="true" />
+            <input id="reg-password" type="password" name="password" required
+                   [placeholder]="t().regPasswordPlaceholder" class="field__input"
+                   [(ngModel)]="registerForm.password" />
+          </div>
+        </div>
+
+        <!--
+          Idioma PREFERIDO DE LA CUENTA: se guarda con el registro y se
+          aplicará la próxima vez que la persona inicie sesión.
+          No controla el idioma de ESTA página (eso lo hace el panel
+          de arriba, "a11y-toolbar").
+        -->
+        <div class="field">
+          <label class="field__label" for="reg-idioma">{{ t().regIdiomaLabel }}</label>
+          <div class="field__input-wrap">
+            <select id="reg-idioma" name="idioma" class="field__input"
+                    [(ngModel)]="registerForm.idioma">
+              <option value="es">Español</option>
+              <option value="en">English</option>
+              <option value="pt">Português</option>
+              <option value="fr">Français</option>
+            </select>
+          </div>
+        </div>
+
+        <!--
+          Perfil de accesibilidad DE LA CUENTA: se guarda con el registro
+          y se aplicará la próxima vez que la persona inicie sesión.
+          No controla la apariencia de ESTA página (eso lo hace el panel
+          de arriba, "a11y-toolbar").
+        -->
+        <div class="field">
+          <label class="field__label" for="reg-accesibilidad">
+            {{ t().regA11yLabel }}
+          </label>
+          <div class="field__input-wrap">
+            <select id="reg-accesibilidad" name="perfilAccesibilidad" class="field__input"
+                    [(ngModel)]="registerForm.perfilAccesibilidad">
+              <option value="">{{ t().a11yNone }}</option>
+              <option value="protanopia">{{ t().a11yProtanopia }}</option>
+              <option value="deuteranopia">{{ t().a11yDeuteranopia }}</option>
+              <option value="tritanopia">{{ t().a11yTritanopia }}</option>
+              <option value="baja_vision">{{ t().a11yBajaVision }}</option>
+              <option value="ceguera">{{ t().a11yCeguera }}</option>
+            </select>
+          </div>
+          <small class="field__help">
+            {{ t().regA11yHelp }}
+          </small>
+        </div>
+
+        <button type="submit" class="btn btn--success">
+          <span>{{ t().regSubmit }}</span>
+          <lucide-icon [img]="checkIcon" [size]="16" aria-hidden="true" />
+        </button>
+
+      </form>
+    }
+
+  </div>
+</div>

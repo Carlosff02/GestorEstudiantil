@@ -1,258 +1,317 @@
 @let activeCourse$ = activeCourse();
-@if(activeCourse$===null){
+
+@if(activeCourse$ === null) {
+
+  <!-- ================= LISTA DE CURSOS ================= -->
   <section id="view-courses" class="view-section space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold text-slate-900">Mis Cursos y Materias</h2>
-        <p class="text-slate-500 mt-1">Configura tus cursos, gestiona sus horarios semanales y redacta apuntes por cada sesión de clase.</p>
+        <h2 class="text-2xl font-bold text-slate-900">{{ t()['misCursos'] }}</h2>
+        <p class="text-slate-500 mt-1">{{ t()['misCursosDesc'] }}</p>
       </div>
-      <button (click)="openCourseModal(null)" class="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all">
-        <lucide-angular [img]="PlusCircleIcon" class="w-5 h-5"></lucide-angular> Nuevo Curso
+      <button (click)="openCourseModal(null)"
+              class="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all focus:outline-none focus:ring-2 focus:ring-primary-400">
+        <lucide-angular [img]="PlusCircleIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+        {{ t()['nuevoCurso'] }}
       </button>
     </div>
 
     <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for(course of courses(); track $index) {
+      @for(course of courses.value(); track $index) {
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition-all flex flex-col justify-between group">
           <div>
             <div class="h-2 border-t-4" [style.border-top-color]="course.color"></div>
             <div class="p-5">
               <div class="flex justify-between items-start mb-2 gap-2">
-                <h3 class="font-bold text-lg text-slate-800 hover:text-primary-600 cursor-pointer transition-colors leading-tight">{{course.name}}</h3>
-                <button
-                (click)="editCourse(course)"
-                class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors" title="Configurar Curso">
-                  <lucide-angular [img]="SettingsIcon" class="w-4 h-4"></lucide-angular>
+                <h3 class="font-bold text-lg text-slate-800 hover:text-primary-600 cursor-pointer transition-colors leading-tight">
+                  {{ course.nombre }}
+                </h3>
+                <button (click)="editCourse(course)"
+                        class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300"
+                        [title]="t()['configurarCurso']"
+                        [attr.aria-label]="t()['configurarCurso']">
+                  <lucide-angular [img]="SettingsIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
                 </button>
               </div>
               <p class="text-xs text-slate-500 mb-4 flex items-center gap-1">
-                <lucide-angular [img]="UserIcon" class="w-3.5 h-3.5"></lucide-angular> Prof: {{course.teacher!=='' ? course.teacher : 'Sin asignar'}}
+                <lucide-angular [img]="UserIcon" class="w-3.5 h-3.5" aria-hidden="true"></lucide-angular>
+                Prof: {{ course.docente !== '' ? course.docente : t()['sinAsignar'] }}
               </p>
 
               <div class="space-y-1 border-t border-slate-50 pt-3">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Sesiones Programadas:</p>
-                @if(!course?.sessions?.length){
-                <p class="text-xs text-slate-400 italic">Sin sesiones programadas en calendario</p>
-                } @else{
-                  @for(session of course.sessions; track $index){
-                    @if(session.startDate!==''){
-                <div class="flex items-center gap-1.5 text-xs text-slate-600">
-                  <span class="font-semibold text-[10px] bg-slate-100 text-slate-700 px-1 py-0.5 rounded uppercase">{{getDayShort(session.startDate)}}</span>
-                  <span [title]="session.name" class="truncate max-w-[80px]">{{session.name}}</span>
-                  <span class="text-slate-400">{{formatTime(session.startDate)}}-{{formatTime(session.endDate)}} (Aula {{session.classRoom}})</span>
-                </div>
-                }
-                }
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+                  {{ t()['sesionesProgramadas'] }}
+                </p>
+                @if(!course?.sesiones?.length) {
+                  <p class="text-xs text-slate-400 italic">{{ t()['sinSesiones'] }}</p>
+                } @else {
+                  @for(session of course.sesiones; track $index) {
+                    @if(session.horaInicio !== '') {
+                      <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                        <span class="font-semibold text-[10px] bg-slate-100 text-slate-700 px-1 py-0.5 rounded uppercase">
+                          {{ getDayShort(session.horaInicio) }}
+                        </span>
+                        <span [title]="session.nombre" class="truncate max-w-[80px]">{{ session.nombre }}</span>
+                        <span class="text-slate-400">
+                          {{ formatTime(session.horaInicio) }}-{{ formatTime(session.horaFin) }} ({{ t()['aulaSala'] }} {{ session.aula }})
+                        </span>
+                      </div>
+                    }
+                  }
                 }
               </div>
             </div>
           </div>
 
-          <div class="p-5 border-t border-slate-50 bg-slate-50/50 flex items-center justify-between">
+          <div class="p-5 border-t border-slate-50 bg-slate-50/50 flex items-center  justify-between">
             <span class="text-xs font-semibold text-slate-500 flex items-center gap-1">
-              <lucide-angular [img]="FileTextIcon" class="w-4 h-4 text-slate-400"></lucide-angular> {{course.sessions.length}} Sesiones
+              <lucide-angular [img]="FileTextIcon" class="w-4 h-4 text-slate-400" aria-hidden="true"></lucide-angular>
+              {{ course.sesiones.length }} {{ t()['sesiones'] }}
             </span>
-            <button (click)="activeCourse.set(course)" class="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center gap-0.5">
-              Ver apuntes <lucide-angular [img]="ChevronRightIcon" class="w-4 h-4"></lucide-angular>
+            <button (click)="activeCourse.set(course)"
+                    class="text-xs font-bold text-primary-600 hover:text-primary-700 flex items-center gap-0.5 focus:outline-none focus:ring-2 focus:ring-primary-400 rounded">
+              {{ t()['verApuntes'] }}
+              <lucide-angular [img]="ChevronRightIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
             </button>
           </div>
+
         </div>
       }
     </div>
   </section>
 
 } @else {
+
+  <!-- ================= DETALLE DE CURSO ================= -->
   <section id="view-course-detail" class="view-section flex flex-col h-full space-y-6">
     <div class="flex items-center justify-between border-b border-slate-200 pb-4 shrink-0">
       <div class="flex items-center gap-4">
-        <button (click)="activeCourse.set(null)" class="p-2 hover:bg-slate-100 bg-white border border-slate-200 rounded-xl text-slate-600 transition-colors shadow-sm">
-          <lucide-angular [img]="ArrowLeftIcon" class="w-5 h-5"></lucide-angular>
+        <button (click)="activeCourse.set(null)"
+                class="p-2 hover:bg-slate-100 bg-white border border-slate-200 rounded-xl text-slate-600 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+                [attr.aria-label]="t()['volverCursos']">
+          <lucide-angular [img]="ArrowLeftIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
         </button>
         <div>
           <div class="flex items-center gap-2">
-            <h2 id="detail-course-name" class="text-2xl font-bold text-slate-900">{{activeCourse$.name}}</h2>
-            <button id="btn-edit-course-meta" class="p-1 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors" title="Configurar Curso">
-              <lucide-angular [img]="SettingsIcon" class="w-4 h-4"></lucide-angular>
+            <h2 class="text-2xl font-bold text-slate-900">{{ activeCourse$.nombre }}</h2>
+            <button class="p-1 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300"
+                    [title]="t()['configurarCurso']"
+                    [attr.aria-label]="t()['configurarCurso']">
+              <lucide-angular [img]="SettingsIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
             </button>
           </div>
-          <p id="detail-course-prof" class="text-sm text-slate-500">Prof. {{activeCourse$.teacher}}</p>
+          <p class="text-sm text-slate-500">Prof. {{ activeCourse$.docente }}</p>
         </div>
       </div>
     </div>
 
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
 
-      <!-- Left Sidebar: Session List -->
+      <!-- Panel izquierdo: lista de sesiones -->
       <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden h-[300px] lg:h-auto">
         <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
           <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-            <lucide-angular [img]="ListIcon" class="w-4 h-4 text-primary-500"></lucide-angular> Sesiones del Curso
+            <lucide-angular [img]="ListIcon" class="w-4 h-4 text-primary-500" aria-hidden="true"></lucide-angular>
+            {{ t()['sesionesDelCurso'] }}
           </h3>
-          <button (click)="createNewSession()" class="text-xs bg-primary-600 hover:bg-primary-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors shadow-sm">
-            <lucide-angular [img]="PlusIcon" class="w-3.5 h-3.5"></lucide-angular> Nueva Sesión
+          <button (click)="createNewSession()"
+                  class="text-xs bg-primary-600 hover:bg-primary-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+            <lucide-angular [img]="PlusIcon" class="w-3.5 h-3.5" aria-hidden="true"></lucide-angular>
+            {{ t()['nuevaSesion'] }}
           </button>
         </div>
-        <div id="sessions-list" class="flex-1 overflow-y-auto p-3 space-y-2">
-          @for(session of activeCourse$.sessions; track $index){
+
+        <div class="flex-1 overflow-y-auto p-3 space-y-2" role="list">
+          @for(session of activeCourse$.sesiones; track $index) {
             <div (click)="activeSession.set(session)"
-            [class.bg-primary-50]="activeSession()?.id===session.id"
-            [class.border-primary-200]="activeSession()?.id===session.id"
-            [class.shadow-sm]="activeSession()?.id===session.id"
-            id="sidemenu-item-${note.id}" class="p-3 rounded-xl cursor-pointer border transition-all flex flex-col gap-1 ${isActive ? 'bg-primary-50 border-primary-200 shadow-sm' : 'bg-white border-slate-100 hover:bg-slate-50'}">
+                 [class.bg-primary-50]="activeSession()?.id === session.id"
+                 [class.border-primary-200]="activeSession()?.id === session.id"
+                 [class.shadow-sm]="activeSession()?.id === session.id"
+                 class="p-3 rounded-xl cursor-pointer border transition-all flex flex-col gap-1 bg-white border-slate-100 hover:bg-slate-50"
+                 role="listitem"
+                 tabindex="0"
+                 (keydown.enter)="activeSession.set(session)"
+                 [attr.aria-selected]="activeSession()?.id === session.id">
               <div class="flex justify-between items-start gap-2">
-                <h4 class="text-xs font-bold note-sidemenu-title ${isActive ? 'text-primary-800' : 'text-slate-800'}">{{session.name}}</h4>
-                <button (click)="deleteSession(session.id)" class="text-slate-300 hover:text-rose-500 transition-colors p-0.5" title="Eliminar sesión">
-                  <lucide-angular [img]="Trash2Icon" class="w-3.5 h-3.5"></lucide-angular>
+                <h4 class="text-xs font-bold text-slate-800">{{ session.nombre }}</h4>
+                <button (click)="$event.stopPropagation(); deleteSession(session.id)"
+                        class="text-slate-300 hover:text-rose-500 transition-colors p-0.5 focus:outline-none focus:ring-2 focus:ring-rose-300 rounded"
+                        [title]="t()['eliminarSesion']"
+                        [attr.aria-label]="t()['eliminarSesion']">
+                  <lucide-angular [img]="Trash2Icon" class="w-3.5 h-3.5" aria-hidden="true"></lucide-angular>
                 </button>
               </div>
               <div class="flex items-center justify-between text-[10px] text-slate-400 font-medium">
-                <span class="note-sidemenu-date">{{session.startDate!=='' ? formatDate(session.startDate) : 'Sin fecha' }}</span>
-                 <span class="bg-primary-100 text-primary-700 px-1 rounded text-[9px] font-bold uppercase">{{getDayShort(session.startDate)}}</span>
+                <span>{{ session.horaInicio !== '' ? formatDate(session.horaInicio) : t()['sinFecha'] }}</span>
+                <span class="bg-primary-100 text-primary-700 px-1 rounded text-[9px] font-bold uppercase">
+                  {{ getDayShort(session.horaInicio) }}
+                </span>
               </div>
             </div>
           }
         </div>
       </div>
+
       @let sessionActive = activeSession();
-      @if(sessionActive!==null){
-      <!-- Right Panel: Editor -->
-      <div
-        [class.hidden]="activeSession()===null"
-      class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <div class="flex items-center gap-2 text-xs text-slate-500">
-            <lucide-angular [img]="InfoIcon" class="w-3.5 h-3.5 text-primary-500"></lucide-angular>
-            <span id="note-last-edited-label">Los apuntes se autoguardan automáticamente</span>
+      @if(sessionActive !== null) {
+
+        <!-- Panel derecho: editor -->
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
+            <div class="flex items-center gap-2 text-xs text-slate-500">
+              <lucide-angular [img]="InfoIcon" class="w-3.5 h-3.5 text-primary-500" aria-hidden="true"></lucide-angular>
+              <span>{{ t()['autoguardado'] }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button (click)="copyNoteToClipboard()"
+                      class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      [title]="t()['copiar']">
+                <lucide-angular [img]="CopyIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
+                <span class="hidden sm:inline">{{ t()['copiar'] }}</span>
+              </button>
+              <button (click)="downloadNoteAsFile()"
+                      class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      [title]="t()['descargar']">
+                <lucide-angular [img]="DownloadIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
+                <span class="hidden sm:inline">{{ t()['descargar'] }}</span>
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button (click)="copyNoteToClipboard()" class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5" title="Copiar apuntes">
-              <lucide-angular [img]="CopyIcon" class="w-4 h-4"></lucide-angular> <span class="hidden sm:inline">Copiar</span>
-            </button>
-            <button (click)="downloadNoteAsFile()" class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 text-xs font-semibold transition-colors flex items-center gap-1.5" title="Descargar apuntes como .txt">
-              <lucide-angular [img]="DownloadIcon" class="w-4 h-4"></lucide-angular> <span class="hidden sm:inline">Descargar (.txt)</span>
-            </button>
-            <!-- <button onclick="saveCurrentNoteChanges(true)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
-              <lucide-angular [img]="SaveIcon" class="w-4 h-4"></lucide-angular> Guardar Todo
-            </button> -->
+
+          <div class="flex-1 p-6 flex flex-col space-y-4 min-h-0 overflow-y-auto">
+            <div class="space-y-1 shrink-0">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                {{ t()['nombreSesion'] }}
+              </label>
+              <input id="editor-note-title" type="text"
+                     [(ngModel)]="sessionActive.nombre"
+                     (ngModelChange)="onSessionChange()"
+                     [placeholder]="t()['placeholderSesion']"
+                     class="w-full text-xl font-bold text-slate-800 border-none outline-none focus:ring-0 p-0 placeholder-slate-300">
+            </div>
+
+            @if(sessionActive.nombre === '') {
+              <div class="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-pulse" role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"/>
+                </svg>
+                <div>
+                  <p class="text-sm font-semibold text-red-700">{{ t()['errorNombreOblig'] }}</p>
+                  <p class="text-xs text-red-500 mt-1">{{ t()['errorNombreDesc'] }}</p>
+                </div>
+              </div>
+            }
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4 border-b border-slate-100 pb-4 shrink-0">
+              <div class="space-y-1 md:col-span-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ t()['fechaInicio'] }}</label>
+                <input type="datetime-local" [(ngModel)]="sessionActive.horaInicio"
+                       (ngModelChange)="onSessionChange()"
+                       class="w-full text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:bg-white focus:border-primary-500 transition-all">
+              </div>
+              <div class="space-y-1 md:col-span-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ t()['fechaFin'] }}</label>
+                <input type="datetime-local" [(ngModel)]="sessionActive.horaFin"
+                       (ngModelChange)="onSessionChange()"
+                       class="w-full text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:bg-white focus:border-primary-500 transition-all">
+              </div>
+              <div class="space-y-1 md:col-span-1">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ t()['aulaSala'] }}</label>
+                <input type="text" [(ngModel)]="sessionActive.aula"
+                       (ngModelChange)="onSessionChange()"
+                       [placeholder]="t()['placeholderAula']"
+                       class="w-full text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:bg-white focus:border-primary-500 transition-all">
+              </div>
+            </div>
+
+            <div class="flex-1 flex flex-col space-y-2 min-h-[200px]">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ t()['contenidoApuntes'] }}</label>
+              <textarea [(ngModel)]="sessionActive.notas"
+                        (ngModelChange)="onSessionChange()"
+                        [placeholder]="t()['placeholderApuntes']"
+                        class="w-full flex-1 border border-slate-100 rounded-xl p-4 text-sm text-slate-700 bg-slate-50/50 leading-relaxed outline-none focus:bg-white focus:border-primary-300 focus:ring-2 focus:ring-primary-100 transition-all resize-none"></textarea>
+            </div>
           </div>
         </div>
-
-        <div class="flex-1 p-6 flex flex-col space-y-4 min-h-0 overflow-y-auto">
-          <div class="space-y-1 shrink-0">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nombre / Tema de la Sesión</label>
-            <input id="editor-note-title" type="text" [(ngModel)]="sessionActive.name"
-             (ngModelChange)="onSessionChange()"
-            placeholder="Ej: Sesión 1: Conceptos Básicos" class="w-full text-xl font-bold text-slate-800 border-none outline-none focus:ring-0 p-0 placeholder-slate-300">
-          </div>
-          <!-- Error -->
-  @if(sessionActive.name === ''){
-    <div
-      class="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 animate-pulse"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="w-5 h-5 text-red-500 shrink-0 mt-0.5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 9v2m0 4h.01M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"
-        />
-      </svg>
-
-      <div>
-        <p class="text-sm font-semibold text-red-700">
-          El nombre de la sesión es obligatorio
-        </p>
-
-        <p class="text-xs text-red-500 mt-1">
-          Los cambios no se guardarán hasta completar este campo.
-        </p>
-      </div>
-    </div>
-  }
-
-          <div class="grid grid-cols-1 md:grid-cols-5 gap-4 border-b border-slate-100 pb-4 shrink-0">
-            <div class="space-y-1 md:col-span-1">
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fecha de Inicio</label>
-              <input id="editor-note-date" type="datetime-local" [(ngModel)]="sessionActive.startDate"
-             (ngModelChange)="onSessionChange()" placeholder="Ej: 12 de Mayo" class="w-full text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:bg-white focus:border-primary-500 transition-all">
-            </div>
-            <div class="space-y-1 md:col-span-1">
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fecha de Fin</label>
-              <input id="editor-note-date" type="datetime-local" [(ngModel)]="sessionActive.endDate"
-             (ngModelChange)="onSessionChange()" placeholder="Ej: 12 de Mayo" class="w-full text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:bg-white focus:border-primary-500 transition-all">
-            </div>
-
-
-            <div class="space-y-1 md:col-span-1">
-              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Aula / Sala</label>
-              <input id="editor-note-room" type="text"
-              (ngModelChange)="onSessionChange()"
-              [(ngModel)]="sessionActive.classRoom" placeholder="Ej: Lab 402" class="w-full text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-xl p-2.5 outline-none focus:bg-white focus:border-primary-500 transition-all">
-            </div>
-          </div>
-
-          <div class="flex-1 flex flex-col space-y-2 min-h-[200px]">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Contenido de tus Apuntes de Clase</label>
-            <textarea
-             (ngModelChange)="onSessionChange()"
-            id="editor-note-content" [(ngModel)]="sessionActive.notes" placeholder="Comienza a redactar los puntos clave de tu clase aquí... (Fórmulas, conceptos, ideas clave)" class="w-full flex-1 border border-slate-100 rounded-xl p-4 text-sm text-slate-700 bg-slate-50/50 leading-relaxed outline-none focus:bg-white focus:border-primary-300 focus:ring-2 focus:ring-primary-100 transition-all resize-none"></textarea>
-          </div>
-        </div>
-      </div>
-    }
+      }
     </div>
   </section>
 }
 
-@if(courseEditing()){
-  <div id="course-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+<!-- ================= MODAL DE CURSO ================= -->
+@if(courseEditing()) {
+  <div id="course-modal"
+       class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+       role="dialog" aria-modal="true" [attr.aria-labelledby]="'course-modal-title'">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg flex flex-col max-h-[90vh] overflow-hidden">
+
       <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-        <h3 id="course-modal-title" class="text-lg font-bold text-slate-800">Agregar Curso</h3>
-        <button (click)="closeCourseModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100">
-          <lucide-angular [img]="XIcon" class="w-5 h-5"></lucide-angular>
+        <h3 id="course-modal-title" class="text-lg font-bold text-slate-800">
+          {{ courseModel().idCurso && courseModel().idCurso !== 0 ? t()['configurarCurso'] : t()['agregarCurso'] }}
+        </h3>
+        <button (click)="closeCourseModal()"
+                class="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-lg hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                [attr.aria-label]="t()['cancelar']">
+          <lucide-angular [img]="XIcon" class="w-5 h-5" ></lucide-angular>
         </button>
       </div>
 
       <div class="p-6 space-y-6 overflow-y-auto flex-1">
-        <input type="hidden" id="modal-course-id">
         <div class="space-y-4">
           <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Nombre del Curso</label>
-            <input [formField]="courseForm.name" id="modal-course-name" type="text" placeholder="Ej: Bases de Datos II" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{{ t()['nombreCurso'] }}</label>
+            <input [formField]="courseForm.nombre" type="text"
+                   [placeholder]="t()['placeholderCurso']"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Profesor / Docente</label>
-            <input [formField]="courseForm.teacher" id="modal-course-prof" type="text" placeholder="Ej: Dr. Roberto Carlos" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{{ t()['profesorDocente'] }}</label>
+            <input [formField]="courseForm.docente" type="text"
+                   [placeholder]="t()['placeholderProfesor']"
+                   class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Color del Curso</label>
-            <div class="flex gap-2">
-              <input type="color" [formField]="courseForm.color" class="w-full h-12 border border-slate-200 rounded-xl cursor-pointer">
-            </div>
-            <input type="hidden" id="modal-course-color" value="indigo">
+  <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+    {{ t()['ciclo'] }}
+  </label>
+  <input
+    [formField]="courseForm.ciclo"
+    type="text"
+    [placeholder]="t()['placeholderCiclo']"
+    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+</div>
+
+<div>
+  <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+    {{ t()['creditos'] }}
+  </label>
+  <input
+    [formField]="courseForm.creditos"
+    type="number"
+    [placeholder]="t()['placeholderCreditos']"
+    class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition-all">
+</div>
+          <div>
+            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">{{ t()['colorCurso'] }}</label>
+            <input type="color" [formField]="courseForm.color" class="w-full h-12 border border-slate-200 rounded-xl cursor-pointer">
           </div>
         </div>
       </div>
 
       <div class="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-        <button
-        [class.hidden]="courseModel().id===0||courseModel().id===null"
-        (click)="deleteCourse(courseModel().id)" id="btn-modal-delete-course" class="text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors">
-          Eliminar Curso
+        <button [class.hidden]="!courseModel().idCurso || courseModel().idCurso === 0"
+                (click)="deleteCourse(courseModel().idCurso)"
+                class="text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-4 py-2.5 rounded-xl text-xs font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-rose-300">
+          {{ t()['eliminarCurso'] }}
         </button>
         <div class="flex gap-2 ml-auto">
-          <button (click)="closeCourseModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 transition-colors text-xs font-semibold">
-            Cancelar
+          <button (click)="closeCourseModal()"
+                  class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 transition-colors text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-slate-300">
+            {{ t()['cancelar'] }}
           </button>
-          <button (click)="saveCourse()" class="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white transition-colors text-xs font-bold shadow-sm">
-            Guardar Curso
+          <button (click)="saveCourse()"
+                  class="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white transition-colors text-xs font-bold shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400">
+            {{ t()['guardarCurso'] }}
           </button>
         </div>
       </div>

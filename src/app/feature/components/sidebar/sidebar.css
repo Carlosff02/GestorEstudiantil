@@ -1,0 +1,307 @@
+.w-10 {
+    width: 2.5rem;
+}
+
+.h-10 {
+    height: 2.5rem;
+}
+
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.bg-gradient-to-tr {
+    background-image: linear-gradient(to top right, var(--tw-gradient-stops));
+}
+
+.from-primary-500 {
+    --tw-gradient-from: #6366f1;
+    --tw-gradient-to: rgb(99 102 241 / 0);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-indigo-500 {
+    --tw-gradient-to: #6366f1;
+}
+
+.text-white {
+    color: #fff;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+/* ═══════════════════════════════════════════════════════════
+   DARK THEME — tokens base
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --sb-bg:           #1a1a2e;
+  --sb-bg-footer:    #15152a;
+  --sb-bg-timer:     #1f1f38;
+  --sb-border:       #2d2d4a;
+  --sb-text-primary: #e2e0f0;
+  --sb-text-muted:   #9898b8;
+  --sb-text-faint:   #4a4a6a;
+  --sb-link-hover:   #2d2d4a;
+  --sb-link-active-bg:    #2e1f5e;
+  --sb-link-active-text:  #a78bfa;
+  --sb-accent:       #a78bfa;
+  --sb-dot-idle:     #4a4a6a;
+  --sb-play-bg:      #2d2d4a;
+  --sb-play-hover:   #3d2d6e;
+  --sb-play-color:   #9898b8;
+  --sb-avatar-from:  #7c3aed;
+  --sb-avatar-to:    #a78bfa;
+  --sb-modal-bg:     #1f1f38;
+  --sb-modal-border: #2d2d4a;
+  --sb-modal-body-bg:#15152a;
+  --sb-modal-icon-bg:#2e1f5e;
+  --sb-modal-icon-color: #a78bfa;
+  --sb-modal-cancel-bg:  #2d2d4a;
+  --sb-modal-cancel-color: #c4c2e0;
+  --sb-modal-cancel-hover: #3d3d5e;
+  --sb-overlay:      rgba(5, 5, 18, 0.75);
+}
+
+/* ─── Clases semánticas del sidebar ────────────────────────── */
+
+.sidebar-dark           { background: var(--sb-bg); }
+.sidebar-header         { border-bottom: 1px solid var(--sb-border); }
+.sidebar-section-border { border-bottom: 1px solid var(--sb-border); }
+.sidebar-logo           { color: var(--sb-accent); }
+.sidebar-text-primary   { color: var(--sb-text-primary); }
+.sidebar-text-muted     { color: var(--sb-text-muted); }
+.sidebar-text-faint     { color: var(--sb-text-faint); }
+.sidebar-icon-btn       { color: var(--sb-text-muted); }
+.sidebar-icon-btn:hover { color: var(--sb-text-primary); }
+
+.sidebar-profile-hover:hover { background: var(--sb-link-hover); }
+
+.sidebar-avatar {
+  background: linear-gradient(135deg, var(--sb-avatar-from), var(--sb-avatar-to));
+}
+
+.sidebar-link {
+  color: var(--sb-text-muted);
+}
+.sidebar-link:hover {
+  background: var(--sb-link-hover);
+  color: var(--sb-text-primary);
+}
+.sidebar-link-active {
+  background: var(--sb-link-active-bg) !important;
+  color: var(--sb-link-active-text) !important;
+}
+
+.sidebar-footer {
+  background: var(--sb-bg-footer);
+  border-top: 1px solid var(--sb-border);
+}
+.sidebar-timer {
+  background: var(--sb-bg-timer);
+  border: 1px solid var(--sb-border);
+}
+.sidebar-dot    { background: var(--sb-dot-idle); }
+.sidebar-play-btn {
+  background: var(--sb-play-bg);
+  color: var(--sb-play-color);
+}
+.sidebar-play-btn:hover {
+  background: var(--sb-play-hover);
+  color: var(--sb-accent);
+}
+
+.sidebar-modal-overlay { background: var(--sb-overlay); }
+.sidebar-modal {
+  background: var(--sb-modal-bg);
+  border: 1px solid var(--sb-modal-border);
+}
+.sidebar-modal-icon {
+  background: var(--sb-modal-icon-bg);
+  color: var(--sb-modal-icon-color);
+}
+.sidebar-modal-body {
+  background: var(--sb-modal-body-bg);
+  border: 1px solid var(--sb-modal-border);
+  color: var(--sb-text-muted);
+}
+.sidebar-btn-cancel {
+  background: var(--sb-modal-cancel-bg);
+  color: var(--sb-modal-cancel-color);
+}
+.sidebar-btn-cancel:hover {
+  background: var(--sb-modal-cancel-hover);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PERFILES DE ACCESIBILIDAD
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Protanopia (insensibilidad al rojo) ───────────────────
+   Reemplaza rojo y violeta por azul/amarillo.
+   Los colores base del dark theme ya son seguros (violeta),
+   solo protegemos los acentos de sesión y botones de acción. */
+.a11y-protanopia {
+  --sb-accent:            #60a5fa;
+  --sb-link-active-bg:    #1e3a5f;
+  --sb-link-active-text:  #93c5fd;
+  --sb-avatar-from:       #1d4ed8;
+  --sb-avatar-to:         #60a5fa;
+  --sb-play-hover:        #1e3a5f;
+  --sb-modal-icon-bg:     #1e3a5f;
+  --sb-modal-icon-color:  #93c5fd;
+}
+
+/* ── Deuteranopia (insensibilidad al verde) ────────────────
+   Similar a protanopia; evita depender del verde como señal.
+   El violeta ya es safe, ajustamos verdes que puedan aparecer. */
+.a11y-deuteranopia {
+  --sb-accent:            #818cf8;
+  --sb-link-active-bg:    #272060;
+  --sb-link-active-text:  #a5b4fc;
+  --sb-avatar-from:       #4338ca;
+  --sb-avatar-to:         #818cf8;
+  --sb-play-hover:        #272060;
+  --sb-modal-icon-bg:     #272060;
+  --sb-modal-icon-color:  #a5b4fc;
+}
+
+/* ── Tritanopia (insensibilidad al azul) ───────────────────
+   Reemplaza azules por amarillo/naranja cálido para señales. */
+.a11y-tritanopia {
+  --sb-accent:            #f59e0b;
+  --sb-link-active-bg:    #3d2a00;
+  --sb-link-active-text:  #fcd34d;
+  --sb-avatar-from:       #b45309;
+  --sb-avatar-to:         #f59e0b;
+  --sb-play-hover:        #3d2a00;
+  --sb-modal-icon-bg:     #3d2a00;
+  --sb-modal-icon-color:  #fcd34d;
+  --sb-dot-idle:          #6b5a2a;
+}
+
+/* ── Baja visión ───────────────────────────────────────────
+   Tipografía más grande, bordes más gruesos y mayor contraste. */
+.a11y-baja-vision {
+  --sb-text-primary: #f0eeff;
+  --sb-text-muted:   #c4c2e0;
+  --sb-text-faint:   #7a7a9a;
+  --sb-border:       #4a4a6a;
+  --sb-accent:       #c4b5fd;
+  --sb-link-active-text: #c4b5fd;
+}
+
+.a11y-baja-vision .sidebar-link,
+.a11y-baja-vision .sidebar-text-muted,
+.a11y-baja-vision .sidebar-text-primary {
+  font-size: 1rem;
+}
+
+.a11y-baja-vision .sidebar-header,
+.a11y-baja-vision .sidebar-section-border,
+.a11y-baja-vision .sidebar-timer,
+.a11y-baja-vision .sidebar-footer {
+  border-width: 2px;
+}
+
+.a11y-baja-vision .sidebar-link {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.a11y-baja-vision .sidebar-link:hover,
+.a11y-baja-vision .sidebar-link-active {
+  outline: 2px solid var(--sb-accent);
+  outline-offset: -2px;
+}
+
+/* ── Ceguera (alto contraste total) ───────────────────────
+   Blanco puro sobre negro, sin matices de color.
+   Foco visible y etiquetas de texto reforzadas. */
+.a11y-ceguera {
+  --sb-bg:            #000000;
+  --sb-bg-footer:     #000000;
+  --sb-bg-timer:      #0a0a0a;
+  --sb-border:        #ffffff;
+  --sb-text-primary:  #ffffff;
+  --sb-text-muted:    #e0e0e0;
+  --sb-text-faint:    #aaaaaa;
+  --sb-link-hover:    #1a1a1a;
+  --sb-link-active-bg:    #ffffff;
+  --sb-link-active-text:  #000000;
+  --sb-accent:        #ffffff;
+  --sb-play-bg:       #1a1a1a;
+  --sb-play-hover:    #333333;
+  --sb-play-color:    #ffffff;
+  --sb-modal-bg:      #000000;
+  --sb-modal-border:  #ffffff;
+  --sb-modal-body-bg: #0a0a0a;
+  --sb-modal-icon-bg: #1a1a1a;
+  --sb-modal-icon-color: #ffffff;
+  --sb-modal-cancel-bg:  #1a1a1a;
+  --sb-modal-cancel-color: #ffffff;
+  --sb-modal-cancel-hover: #333333;
+  --sb-overlay:       rgba(0, 0, 0, 0.92);
+}
+
+.a11y-ceguera .sidebar-avatar {
+  background: #333333;
+  outline: 2px solid #ffffff;
+}
+
+.a11y-ceguera .sidebar-link:focus,
+.a11y-ceguera .sidebar-play-btn:focus,
+.a11y-ceguera button:focus {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.a11y-ceguera .sidebar-link-active {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ─── SVG filters para daltonismo (pegar en index.html) ────
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <defs>
+    <filter id="protanopia-filter">
+      <feColorMatrix type="matrix" values="
+        0.567 0.433 0     0 0
+        0.558 0.442 0     0 0
+        0     0.242 0.758 0 0
+        0     0     0     1 0"/>
+    </filter>
+    <filter id="deuteranopia-filter">
+      <feColorMatrix type="matrix" values="
+        0.625 0.375 0     0 0
+        0.7   0.3   0     0 0
+        0     0.3   0.7   0 0
+        0     0     0     1 0"/>
+    </filter>
+    <filter id="tritanopia-filter">
+      <feColorMatrix type="matrix" values="
+        0.95  0.05  0     0 0
+        0     0.433 0.567 0 0
+        0     0.475 0.525 0 0
+        0     0     0     1 0"/>
+    </filter>
+  </defs>
+</svg>
+*/

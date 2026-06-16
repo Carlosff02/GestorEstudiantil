@@ -1,4 +1,3 @@
-
 /* ─── Design tokens ─────────────────────────────────────────────────────────── */
 :host {
   --primary-100: #ede9fe;
@@ -20,7 +19,6 @@
   inset: 0;
   display: flex;
   align-items: center;
-  flex-direction: column;
   justify-content: center;
   z-index: 50;
   padding: 1rem;
@@ -43,7 +41,8 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
   width: 100%;
   max-width: 28rem;
-  overflow: hidden;
+  max-height: calc(100vh - 10rem);
+  overflow-y: auto;
   position: relative;
   z-index: 10;
   border: 1px solid var(--slate-100);
@@ -250,9 +249,12 @@
   (al presionar Tab desde el principio de la página). Es la forma
   estándar de dar acceso rápido por teclado a controles que no
   son el primer elemento del documento.
+
+  Usa position: fixed para que siempre se posicione respecto al
+  viewport, independientemente del scroll o del contenedor padre.
 */
 .skip-link {
-  position: absolute;
+  position: fixed;
   top: -3rem;
   left: 0.5rem;
   z-index: 1000;
@@ -284,13 +286,19 @@
 
 /* ============================================================
    PANEL DE PREFERENCIAS (idioma + accesibilidad de la página)
+   Ahora es una barra flotante fija en la parte superior del viewport
+   para que no empuje el auth-card hacia abajo ni se salga de la
+   pantalla en viewports pequeños.
    ============================================================ */
 
 .a11y-toolbar {
-  position: relative;
-  z-index: 10;
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
   max-width: 30rem;
-  margin: 0 auto 1rem;
+  width: calc(100% - 2rem);
   padding: 0.85rem 1rem;
   border-radius: 0.75rem;
   background: rgba(255, 255, 255, 0.92);

@@ -1,148 +1,211 @@
-<body class="bg-surface text-slate-800 h-screen flex overflow-hidden">
+<body [class]="'bg-surface text-slate-800 h-screen flex overflow-hidden ' + a11yClass()"
+      [attr.lang]="user()?.idioma || 'es'">
 
-    <!-- Mobile Overlay -->
-    <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/50 z-20 hidden md:hidden" onclick="toggleSidebar()"></div>
-<app-sidebar></app-sidebar>
+  <!-- Mobile Overlay -->
+  <div id="mobile-overlay"
+       class="fixed inset-0 bg-slate-900/50 z-20 hidden md:hidden"
+       onclick="toggleSidebar()">
+  </div>
 
+  <app-sidebar></app-sidebar>
 
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full w-full overflow-hidden">
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col h-full w-full overflow-hidden">
 
-        <!-- Top Header -->
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-10 shrink-0">
-            <div class="flex items-center gap-4">
-                <button class="md:hidden text-slate-500 hover:text-slate-700" onclick="toggleSidebar()">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
+    <!-- Top Header -->
+    <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-10 shrink-0"
+            role="banner">
+      <div class="flex items-center gap-4">
+        <button class="md:hidden text-slate-500 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded"
+                onclick="toggleSidebar()"
+                [attr.aria-label]="t()['abrirMenu']">
+          <i data-lucide="menu" class="w-6 h-6" aria-hidden="true"></i>
+        </button>
+        <h1 id="header-title" class="text-xl font-bold text-slate-800 hidden sm:block">
+          {{ t()['dashboard'] }}
+        </h1>
+      </div>
+
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Search -->
+         <button (click)="notificationModalOpen.set(true)" class="w-9 h-9 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-colors relative" title="Ver Notificaciones">
+          <lucide-angular [img]="Bell" class="w-5 h-5"></lucide-angular>
+                    <span id="notification-badge" class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white hidden"></span>
                 </button>
-                <h1 id="header-title" class="text-xl font-bold text-slate-800 hidden sm:block">Dashboard</h1>
-            </div>
-
-            <div class="flex items-center gap-3 sm:gap-4">
-                <!-- Search -->
-                <div class="relative hidden sm:block">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" placeholder="Buscar cursos, tareas..." class="pl-9 pr-4 py-2 bg-slate-100 border-transparent rounded-full text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all outline-none w-64">
-                </div>
-
-                <button class="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors relative">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
-                </button>
-            </div>
-        </header>
-
-        <!-- Dynamic Views Area -->
-        <div class="flex-1 overflow-y-auto bg-surface p-4 sm:p-6 lg:p-8">
-
-           <router-outlet></router-outlet>
 
 
+      </div>
+    </header>
 
-            <!-- ================= VIEW: COURSE DETAIL (NOTAS) ================= -->
-            <section id="view-course-detail" class="view-section hidden space-y-6">
-                <div class="flex items-center gap-4">
-                    <button onclick="switchView('courses')" class="p-2 hover:bg-slate-200 bg-white border border-slate-200 rounded-lg text-slate-600 transition-colors">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                    </button>
-                    <div>
-                        <h2 id="detail-course-name" class="text-2xl font-bold text-slate-900">Nombre del Curso</h2>
-                        <p id="detail-course-prof" class="text-slate-500">Profesor</p>
-                    </div>
-                </div>
+    <!-- Dynamic Views Area -->
+    <div class="flex-1 overflow-y-auto bg-surface p-4 sm:p-6 lg:p-8">
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Grade Table -->
-                    <div class="lg:col-span-2 space-y-4">
-                        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
-                                <h3 class="font-bold text-slate-800">Registro de Calificaciones</h3>
-                                <span class="text-xs font-medium text-slate-500">Ciclo 2026-I</span>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left">
-                                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                                        <tr>
-                                            <th class="px-6 py-3 font-semibold">Evaluación</th>
-                                            <th class="px-6 py-3 font-semibold">Peso</th>
-                                            <th class="px-6 py-3 font-semibold">Fecha</th>
-                                            <th class="px-6 py-3 font-semibold text-right">Nota</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="detail-grades-table" class="divide-y divide-slate-100">
-                                        <!-- Inyectado por JS -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+      <router-outlet></router-outlet>
 
-                    <!-- Course Stats -->
-                    <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
-                            <p class="text-sm font-medium text-slate-500 mb-2">Promedio Actual</p>
-                            <div class="relative inline-flex items-center justify-center mb-4">
-                                <svg class="w-32 h-32 transform -rotate-90">
-                                    <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100" />
-                                    <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" stroke-dasharray="364.4" stroke-dashoffset="72.8" class="text-primary-500" id="detail-progress-circle" />
-                                </svg>
-                                <span id="detail-average-text" class="absolute text-3xl font-black text-slate-900">16.0</span>
-                            </div>
-                            <div class="flex items-center justify-center gap-2 text-sm">
-                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-                                <span class="font-medium text-slate-700">Estado: <span class="text-emerald-600">Aprobando</span></span>
-                            </div>
-                        </div>
-
-                        <div class="bg-indigo-600 p-6 rounded-2xl text-white shadow-lg shadow-indigo-200">
-                            <h4 class="font-bold mb-2 flex items-center gap-2">
-                                <i data-lucide="sparkles" class="w-4 h-4"></i> Predicción
-                            </h4>
-                            <p class="text-indigo-100 text-xs leading-relaxed">
-                                Si obtienes al menos un 14 en el examen final, mantendrás tu promedio actual por encima de 16.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-
-
-            <!-- ================= VIEW: PROJECTS ================= -->
-            <section id="view-projects" class="view-section hidden space-y-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Mis Proyectos</h2>
-                        <p class="text-slate-500">Colabora en tiempo real con tus compañeros.</p>
-                    </div>
-                    <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Proyecto
-                    </button>
-                </div>
-
-                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
-            </section>
-
-            <!-- ================= VIEW: KANBAN ================= -->
-            <section id="view-kanban" class="view-section hidden h-full flex flex-col">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center gap-4">
-                        <button onclick="switchView('projects')" class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 transition-colors">
-                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                        </button>
-                        <div>
-                            <h2 id="kanban-project-title" class="text-2xl font-bold text-slate-900">Tablero de Proyecto</h2>
-                            <p class="text-slate-500">Gestión ágil de tareas.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex-1 overflow-x-auto pb-4">
-                    <div class="flex gap-6 h-full min-w-max items-start" id="kanban-board">
-                    </div>
-                </div>
-            </section>
-
+      <!-- ================= VIEW: COURSE DETAIL ================= -->
+      <section id="view-course-detail" class="view-section hidden space-y-6" aria-labelledby="detail-course-name">
+        <div class="flex items-center gap-4">
+          <button onclick="switchView('courses')"
+                  class="p-2 hover:bg-slate-200 bg-white border border-slate-200 rounded-lg text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  [attr.aria-label]="t()['misCursos']">
+            <i data-lucide="arrow-left" class="w-5 h-5" aria-hidden="true"></i>
+          </button>
+          <div>
+            <h2 id="detail-course-name" class="text-2xl font-bold text-slate-900">Nombre del Curso</h2>
+            <p id="detail-course-prof" class="text-slate-500">Profesor</p>
+          </div>
         </div>
-    </main>
-    </body>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Grade Table -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+              <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800">{{ t()['registroCalif'] }}</h3>
+                <span class="text-xs font-medium text-slate-500">{{ t()['ciclo'] }}</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left" role="table">
+                  <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
+                    <tr>
+                      <th scope="col" class="px-6 py-3 font-semibold">{{ t()['evaluacion'] }}</th>
+                      <th scope="col" class="px-6 py-3 font-semibold">{{ t()['peso'] }}</th>
+                      <th scope="col" class="px-6 py-3 font-semibold">{{ t()['fecha'] }}</th>
+                      <th scope="col" class="px-6 py-3 font-semibold text-right">{{ t()['nota'] }}</th>
+                    </tr>
+                  </thead>
+                  <tbody id="detail-grades-table" class="divide-y divide-slate-100">
+                    <!-- Inyectado por JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Course Stats -->
+          <div class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+              <p class="text-sm font-medium text-slate-500 mb-2">{{ t()['promedioActual'] }}</p>
+              <div class="relative inline-flex items-center justify-center mb-4" role="img" aria-label="16.0">
+                <svg class="w-32 h-32 transform -rotate-90" aria-hidden="true">
+                  <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100" />
+                  <circle cx="64" cy="64" r="58" stroke="currentColor" stroke-width="8" fill="transparent"
+                          stroke-dasharray="364.4" stroke-dashoffset="72.8"
+                          class="text-primary-500" id="detail-progress-circle" />
+                </svg>
+                <span id="detail-average-text" class="absolute text-3xl font-black text-slate-900">16.0</span>
+              </div>
+              <div class="flex items-center justify-center gap-2 text-sm">
+                <span class="w-3 h-3 rounded-full bg-emerald-500" aria-hidden="true"></span>
+                <span class="font-medium text-slate-700">
+                  Estado: <span class="text-emerald-600">{{ t()['estadoAprobando'] }}</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="bg-indigo-600 p-6 rounded-2xl text-white shadow-lg shadow-indigo-200">
+              <h4 class="font-bold mb-2 flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4" aria-hidden="true"></i>
+                {{ t()['prediccion'] }}
+              </h4>
+              <p class="text-indigo-100 text-xs leading-relaxed">{{ t()['prediccionTexto'] }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW: PROJECTS ================= -->
+      <section id="view-projects" class="view-section hidden space-y-6" aria-labelledby="projects-heading">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 id="projects-heading" class="text-2xl font-bold text-slate-900">{{ t()['misProyectos'] }}</h2>
+            <p class="text-slate-500">{{ t()['colabora'] }}</p>
+          </div>
+          <button class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-400">
+            <i data-lucide="plus" class="w-4 h-4" aria-hidden="true"></i>
+            {{ t()['nuevoProyecto'] }}
+          </button>
+        </div>
+        <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+
+      <!-- ================= VIEW: KANBAN ================= -->
+      <section id="view-kanban" class="view-section hidden h-full flex flex-col" aria-labelledby="kanban-project-title">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-4">
+            <button onclick="switchView('projects')"
+                    class="p-2 hover:bg-slate-200 bg-slate-100 rounded-lg text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    [attr.aria-label]="t()['misProyectos']">
+              <i data-lucide="arrow-left" class="w-5 h-5" aria-hidden="true"></i>
+            </button>
+            <div>
+              <h2 id="kanban-project-title" class="text-2xl font-bold text-slate-900">{{ t()['tableroProyecto'] }}</h2>
+              <p class="text-slate-500">{{ t()['gestionAgil'] }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 overflow-x-auto pb-4">
+          <div class="flex gap-6 h-full min-w-max items-start" id="kanban-board" role="list"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</body>
+<!-- ================= MODAL DE NOTIFICACIONES E INVITACIONES ================= -->
+ @if(notificationModalOpen()){
+    <div id="notifications-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <lucide-angular [img]="Bell" class="ww-4 h-4 text-primary-500text-primary-500"></lucide-angular>
+                    <span>Invitaciones y Notificaciones</span>
+                </h3>
+                <button (click)="notificationModalOpen.set(false)" class="text-slate-400 hover:text-slate-600">
+                  <lucide-angular [img]="X" class="w-5 h-5"></lucide-angular>
+                </button>
+            </div>
+            <div class="p-5 space-y-4 max-h-[350px] overflow-y-auto" id="notifications-list-container">
+                <!-- Se inserta de manera dinámica -->
+                 @if(proyectos.hasValue()&&proyectos.value().length>0){
+                  @for(proyecto of proyectos.value(); track $index){
+                  <div class="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-extrabold text-xs">
+                                    {{proyecto.nombreUsuario.substring(0,2).toUpperCase()}}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs text-slate-700 font-medium">
+                                        <span class="font-bold text-slate-900">{{proyecto.nombreUsuario}}</span> te invitó a unirte al proyecto:
+                                    </p>
+                                    <p class="text-xs font-black text-slate-900 mt-0.5 truncate">{{proyecto.nombre}}</p>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Rol Propuesto: {{proyecto.rolPropuesto}}</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 justify-end pt-1">
+                                <button
+                                (click)="reachazarInvitacion(proyecto.idProyectoMiembro)"
+                                class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-[10px] rounded-lg transition-colors">
+                                    Rechazar
+                                </button>
+                                <button
+                                (click)="aceptarInvitacion(proyecto.idProyecto)"
+                                class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white font-bold text-[10px] rounded-lg shadow-sm transition-colors">
+                                    Aceptar
+                                </button>
+                            </div>
+                        </div>
+                        }
+                 } @else{
+                  <div class="text-center py-8 text-slate-400">
+                        <i data-lucide="check-circle" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                        <p class="text-xs font-semibold">No tienes invitaciones pendientes</p>
+                    </div>
+                 }
+            </div>
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end text-xs">
+                <button (click)="notificationModalOpen.set(false)" class="px-4 py-2 font-bold text-slate-600 hover:bg-slate-100 rounded-lg">Cerrar</button>
+            </div>
+        </div>
+    </div>
+}

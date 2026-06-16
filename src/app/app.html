@@ -1,1 +1,10 @@
-<router-outlet></router-outlet>
+<div
+  [class.a11y-baja-vision]="user()?.perfilAccesibilidad === 'baja_vision'"
+  [class.a11y-protanopia]="user()?.perfilAccesibilidad === 'protanopia'"
+  [class.a11y-deuteranopia]="user()?.perfilAccesibilidad === 'deuteranopia'"
+  [class.a11y-tritanopia]="user()?.perfilAccesibilidad === 'tritanopia'"
+  [class.a11y-ceguera]="user()?.perfilAccesibilidad === 'ceguera'">
+
+  <router-outlet></router-outlet>
+
+</div>
