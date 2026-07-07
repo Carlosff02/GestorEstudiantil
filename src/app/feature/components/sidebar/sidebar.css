@@ -280,6 +280,10 @@
   will-change: transform;
 }
 
+.sidebar-nav {
+  -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 767px) {
   #sidebar {
     width: 16rem !important;

@@ -3,8 +3,8 @@
   <!-- Welcome Banner -->
   <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
     <div>
-      <h2 class="text-2xl font-bold text-slate-900">{{ greeting() }}</h2>
-      <p class="text-slate-500 mt-1">{{ t()['subtitulo'] }}</p>
+      <h2 class="text-xl sm:text-2xl font-bold text-slate-900">{{ greeting() }}</h2>
+      <p class="text-slate-500 mt-1 text-sm sm:text-base">{{ t()['subtitulo'] }}</p>
     </div>
     <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm flex items-center gap-2">
       <span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
@@ -79,12 +79,12 @@
           <div class="space-y-4">
 
             @for(item of getTodaySessions()?.sort((a, b) => a.sesion.horaInicio.localeCompare(b.sesion.horaInicio)); track item.sesion.id) {
-              <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-white hover:shadow-md transition-all">
+              <div class="flex items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-2xl border border-slate-100 bg-white hover:shadow-md transition-all">
 
-                <div class="text-center min-w-[60px]" aria-label="{{ formatTime(item.sesion.horaInicio) }} - {{ formatTime(item.sesion.horaFin) }}">
-                  <p class="text-xs font-bold text-slate-400 uppercase">{{ formatTime(item.sesion.horaInicio) }}</p>
-                  <div class="w-0.5 h-4 bg-slate-200 mx-auto my-1" aria-hidden="true"></div>
-                  <p class="text-xs font-bold text-slate-400 uppercase">{{ formatTime(item.sesion.horaFin) }}</p>
+                <div class="text-center min-w-[50px] sm:min-w-[60px]" aria-label="{{ formatTime(item.sesion.horaInicio) }} - {{ formatTime(item.sesion.horaFin) }}">
+                  <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">{{ formatTime(item.sesion.horaInicio) }}</p>
+                  <div class="w-0.5 h-3 sm:h-4 bg-slate-200 mx-auto my-0.5 sm:my-1" aria-hidden="true"></div>
+                  <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">{{ formatTime(item.sesion.horaFin) }}</p>
                 </div>
 
                 <div class="flex-1">
