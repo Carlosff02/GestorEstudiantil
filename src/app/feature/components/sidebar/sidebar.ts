@@ -8,6 +8,7 @@ import {
 } from 'lucide-angular';
 import { AuthService } from '../../service/auth.service';
 import { CommonModule, TitleCasePipe } from '@angular/common';
+import { PerfilAccesibilidad, PreferenciasService } from '../../../core/service/preferencias.service';
 
 type Idioma = 'es' | 'en' | 'pt' | 'fr';
 
@@ -91,7 +92,7 @@ const I18N: Record<Idioma, Record<string, string>> = {
 };
 
 const A11Y_CLASSES: Record<PerfilAccesibilidad, string> = {
-  normal: '',
+  '': '',
   protanopia: 'a11y-protanopia',
   deuteranopia: 'a11y-deuteranopia',
   tritanopia: 'a11y-tritanopia',
@@ -119,6 +120,8 @@ export class Sidebar {
   readonly AlertTriangle = TriangleAlert;
   readonly LogOut = LogOut;
   readonly User = User;
+
+  protected readonly prefs = inject(PreferenciasService);
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -169,7 +172,7 @@ export class Sidebar {
   });
 
   t = computed(() => I18N[this.idioma()]);
-  a11yClass = computed(() => A11Y_CLASSES[this.perfil()]);
+  a11yClass = computed(() => A11Y_CLASSES[this.prefs.perfil()]);
 
   onLogout() {
     this.authService.logOut();
