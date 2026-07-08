@@ -2,11 +2,15 @@
 <div
   [class]="a11yClass()"
   [lang]="idioma()"
+  class="min-h-screen"
 >
 
   <router-outlet></router-outlet>
 
   <!-- Botón flotante de accesibilidad + sidebar lateral -->
   <app-a11y-sidebar></app-a11y-sidebar>
+
+  <!-- Toast notifications y diálogos de confirmación -->
+  <app-toast-container></app-toast-container>
 
 </div>

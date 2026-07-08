@@ -15,6 +15,7 @@ import { AuthService } from '../../service/auth.service';
 import { LoginRequest, RegisterRequest } from '../../types/login-request.type';
 import { Router } from '@angular/router';
 import { PreferenciasService } from '../../../core/service/preferencias.service';
+import { ToastService } from '../../../shared/toast/toast.service';
 
 /**
  * Componente de Login/Registro.
@@ -24,6 +25,8 @@ import { PreferenciasService } from '../../../core/service/preferencias.service'
  *
  * Las preferencias de ACCESO (idioma/perfil de la cuenta) se guardan
  * con el registro y se aplican la próxima vez que el usuario inicie sesión.
+ *
+ * Mejoras: mensajes toast de error/confirmación y diseño responsive.
  */
 @Component({
   selector: 'app-login',
@@ -43,9 +46,11 @@ export class Login {
 
   private readonly authService = inject(AuthService);
   private readonly router      = inject(Router);
+  private readonly toast       = inject(ToastService);
   readonly prefs = inject(PreferenciasService);
 
   activeTab = signal<'login' | 'register'>('login');
+  loading   = signal(false);
 
   // ── Preferencias de VISUALIZACIÓN (del servicio global) ──
   uiIdioma = this.prefs.idioma;
@@ -65,16 +70,49 @@ export class Login {
   }
 
   handleLogin(): void {
+    // Validación básica client-side
+    if (!this.loginForm.correo || !this.loginForm.password) {
+      this.toast.warning('Campos requeridos', 'Por favor completa todos los campos para iniciar sesión.');
+      return;
+    }
+
+    this.loading.set(true);
     this.authService.login(this.loginForm).subscribe({
-      next:  () => this.router.navigate(['/home']),
-      error: (err) => console.error(err),
+      next: () => {
+        this.toast.success('¡Bienvenido!', 'Has iniciado sesión correctamente.');
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        const msg = err?.error?.mensaje || err?.message || 'Error al iniciar sesión. Verifica tus credenciales.';
+        this.toast.error('Error de inicio de sesión', msg);
+        this.loading.set(false);
+      },
     });
   }
 
   handleRegister(): void {
+    // Validación básica
+    if (!this.registerForm.nombres || !this.registerForm.apellidos ||
+        !this.registerForm.correo || !this.registerForm.password) {
+      this.toast.warning('Campos requeridos', 'Por favor completa todos los campos para registrarte.');
+      return;
+    }
+    if (this.registerForm.password.length < 6) {
+      this.toast.warning('Contraseña muy corta', 'La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    this.loading.set(true);
     this.authService.register(this.registerForm).subscribe({
-      next:  () => this.router.navigate(['/home']),
-      error: (err) => console.error(err),
+      next: () => {
+        this.toast.success('¡Cuenta creada!', 'Tu cuenta se ha registrado exitosamente. Bienvenido a StudySync.');
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        const msg = err?.error?.mensaje || err?.message || 'Error al registrarte. Intenta de nuevo.';
+        this.toast.error('Error de registro', msg);
+        this.loading.set(false);
+      },
     });
   }
 }

@@ -5,6 +5,7 @@ import { AuthService } from '../../service/auth.service';
 import { Bell, LucideAngularModule, X } from 'lucide-angular';
 import { ProyectoMiembroService } from '../../service/proyecto-miembro.service';
 import { PreferenciasService } from '../../../core/service/preferencias.service';
+import { ToastService } from '../../../shared/toast/toast.service';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -125,6 +126,7 @@ export class Home {
   private readonly authService = inject(AuthService);
   private readonly proyectoMiembroService = inject(ProyectoMiembroService);
   private readonly prefs = inject(PreferenciasService);
+  private readonly toast = inject(ToastService);
 
   user = this.authService.userSignal;
 
@@ -156,20 +158,32 @@ export class Home {
     const idUsuario = this.user()?.idUsuario;
     if(!idUsuario) return;
     this.proyectoMiembroService.aceptarr({idProyecto: proyectoId,idUsuario:idUsuario}).subscribe({
-      next:(res)=>{
-        this.notificationModalOpen.set(false)
+      next:()=>{
+        this.toast.success('Invitación aceptada', 'Ahora eres miembro del proyecto.');
+        this.notificationModalOpen.set(false);
+        this.proyectos.reload();
       }, error:(err)=>{
-        console.error(err)
+        this.toast.error('Error', err?.error?.mensaje || 'No se pudo aceptar la invitación.');
       }
     })
   }
   reachazarInvitacion(proyectoMiembroId:number){
-    this.proyectoMiembroService.eliminarMiembro(proyectoMiembroId).subscribe({
-      next:(res)=>{
-        this.proyectos.reload()
-      }, error:(err)=>{
-        console.error(err)
+    this.toast.confirm({
+      title: 'Rechazar invitación',
+      message: '¿Estás seguro de que deseas rechazar esta invitación?',
+      confirmLabel: 'Sí, rechazar',
+      cancelLabel: 'Cancelar',
+      type: 'danger',
+      onConfirm: () => {
+        this.proyectoMiembroService.eliminarMiembro(proyectoMiembroId).subscribe({
+          next:()=>{
+            this.toast.info('Invitación rechazada', 'Has rechazado la invitación al proyecto.');
+            this.proyectos.reload();
+          }, error:(err)=>{
+            this.toast.error('Error', err?.error?.mensaje || 'No se pudo rechazar la invitación.');
+          }
+        })
       }
-    })
+    });
   }
 }
