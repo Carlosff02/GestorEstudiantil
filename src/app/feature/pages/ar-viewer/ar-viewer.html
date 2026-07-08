@@ -1,0 +1,182 @@
+<div [class]="'min-h-screen bg-slate-950 text-slate-100 flex flex-col ' + a11yClass()">
+
+  <!-- Header -->
+  <header class="h-16 bg-slate-900 border-b border-slate-700 flex items-center px-4 sticky top-0 z-10">
+    <a [routerLink]="'/home/dashboard'"
+       class="flex items-center gap-2 text-slate-400 hover:text-violet-300 transition-colors mr-4 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded p-1"
+       [attr.aria-label]="t()['volver']">
+      <lucide-angular [img]="ArrowLeft" class="w-5 h-5"></lucide-angular>
+    </a>
+    <div class="flex items-center gap-2 text-violet-400">
+      <lucide-angular [img]="Box" class="w-6 h-6"></lucide-angular>
+      <h1 class="font-bold text-lg">{{ t()['titulo'] }}</h1>
+    </div>
+  </header>
+
+  <!-- Estado de carga -->
+  @if (cameraStatus() === 'loading') {
+  <div class="flex-1 flex flex-col items-center justify-center gap-4 p-8">
+    <div class="w-16 h-16 border-4 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+    <p class="text-slate-400 text-lg">{{ t()['cargando'] }}</p>
+    <p class="text-slate-500 text-sm text-center max-w-md">{{ t()['instrucciones'] }}</p>
+  </div>
+  }
+
+  <!-- Estado de error -->
+  @if (cameraStatus() === 'error') {
+  <div class="flex-1 flex flex-col items-center justify-center gap-6 p-8">
+    <div class="w-20 h-20 bg-rose-900/30 rounded-full flex items-center justify-center">
+      <lucide-angular [img]="Camera" class="w-10 h-10 text-rose-400"></lucide-angular>
+    </div>
+    <p class="text-rose-400 text-lg font-medium">{{ t()['error'] }}</p>
+    <button (click)="retryCamera()"
+            class="flex items-center gap-2 px-6 py-3 bg-violet-700 hover:bg-violet-600 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+      <lucide-angular [img]="RefreshCw" class="w-5 h-5"></lucide-angular>
+      {{ t()['volver'] }}
+    </button>
+  </div>
+  }
+
+  <!-- Visor AR -->
+  @if (cameraStatus() === 'ready') {
+  <div class="flex-1 relative">
+
+    <!-- Escena A-Frame / AR.js -->
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: color_matrix; matrixCodeType: 3x3;"
+      renderer="logarithmicDepthBuffer: true;"
+      vr-mode-ui="enabled: false"
+      style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
+    >
+      <a-assets>
+        <!-- Modelo: Átomo -->
+        <a-asset-item id="atomo-model" src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/models/obj/lightning/lightning.obj"></a-asset-item>
+
+        <!-- Modelo: Corazón (usamos geometría primitiva) -->
+
+        <!-- Modelo: Sistema Solar (usamos múltiples esferas) -->
+      </a-assets>
+
+      <a-marker preset="hiro">
+        @if (selectedModel() === 'atomo') {
+        <!-- Átomo: núcleo + electrones orbitando -->
+        <a-entity position="0 0 0">
+          <a-sphere radius="0.15" color="#8b5cf6" emissive="#6d28d9" emissive-intensity="0.5"></a-sphere>
+          <!-- Órbita 1 -->
+          <a-entity rotation="0 0 0">
+            <a-torus radius="0.4" radius-tubular="0.005" color="#a78bfa" opacity="0.5" transparent="true"></a-torus>
+            <a-sphere radius="0.06" color="#60a5fa" animation="property: position; to: 0.4 0 0; dur: 2000; easing: linear; loop: true"
+                      position="0.4 0 0"></a-sphere>
+          </a-entity>
+          <!-- Órbita 2 -->
+          <a-entity rotation="90 0 0">
+            <a-torus radius="0.6" radius-tubular="0.005" color="#a78bfa" opacity="0.5" transparent="true"></a-torus>
+            <a-sphere radius="0.05" color="#34d399" animation="property: position; to: 0.6 0 0; dur: 3000; easing: linear; loop: true"
+                      position="0.6 0 0"></a-sphere>
+          </a-entity>
+          <!-- Órbita 3 -->
+          <a-entity rotation="45 45 0">
+            <a-torus radius="0.8" radius-tubular="0.005" color="#a78bfa" opacity="0.5" transparent="true"></a-torus>
+            <a-sphere radius="0.04" color="#fbbf24" animation="property: position; to: 0.8 0 0; dur: 4000; easing: linear; loop: true"
+                      position="0.8 0 0"></a-sphere>
+          </a-entity>
+        </a-entity>
+        }
+
+        @if (selectedModel() === 'corazon') {
+        <!-- Corazón 3D usando geometría torus knot -->
+        <a-entity position="0 0 0" animation="property: rotation; to: 0 360 0; dur: 8000; easing: linear; loop: true">
+          <a-torus-knot radius="0.3" radius-tubular="0.08" p="2" q="3" color="#e11d48" emissive="#be123c" emissive-intensity="0.3">
+          </a-torus-knot>
+          <a-torus-knot radius="0.25" radius-tubular="0.06" p="2" q="3" color="#fb7185" emissive="#e11d48" emissive-intensity="0.2"
+                        position="0 0 0.05">
+          </a-torus-knot>
+          <a-entity position="0 -0.3 0" scale="0.5 0.5 0.5">
+            <a-box depth="0.1" height="0.1" width="0.05" color="#e11d48" position="-0.1 -0.05 0"></a-box>
+            <a-box depth="0.1" height="0.1" width="0.05" color="#e11d48" position="0.1 -0.05 0"></a-box>
+          </a-entity>
+        </a-entity>
+        }
+
+        @if (selectedModel() === 'sistema-solar') {
+        <!-- Sistema Solar -->
+        <a-entity position="0 0 0" animation="property: rotation; to: 0 360 0; dur: 60000; easing: linear; loop: true">
+          <!-- Sol -->
+          <a-sphere radius="0.15" color="#fbbf24" emissive="#f59e0b" emissive-intensity="0.8">
+            <a-animation attribute="scale" to="1.1 1.1 1.1" dur="2000" direction="alternate" loop="true"></a-animation>
+          </a-sphere>
+          <!-- Mercurio -->
+          <a-entity rotation="0 0 0">
+            <a-sphere radius="0.02" color="#9ca3af" position="0.25 0 0"
+                      animation="property: position; to: 0.25 0 0; dur: 3000; easing: linear; loop: true"></a-sphere>
+          </a-entity>
+          <!-- Venus -->
+          <a-entity rotation="0 30 0">
+            <a-sphere radius="0.035" color="#f59e0b" position="0.35 0 0"
+                      animation="property: position; to: 0.35 0 0; dur: 5000; easing: linear; loop: true"></a-sphere>
+          </a-entity>
+          <!-- Tierra -->
+          <a-entity rotation="0 60 0">
+            <a-sphere radius="0.04" color="#3b82f6" position="0.45 0 0"
+                      animation="property: position; to: 0.45 0 0; dur: 7000; easing: linear; loop: true"></a-sphere>
+            <a-torus radius="0.45" radius-tubular="0.003" color="#6366f1" opacity="0.3" transparent="true"></a-torus>
+          </a-entity>
+          <!-- Marte -->
+          <a-entity rotation="0 90 0">
+            <a-sphere radius="0.03" color="#ef4444" position="0.55 0 0"
+                      animation="property: position; to: 0.55 0 0; dur: 10000; easing: linear; loop: true"></a-sphere>
+          </a-entity>
+        </a-entity>
+        }
+      </a-marker>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- Panel de control flotante -->
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 bg-slate-900/90 backdrop-blur-md border border-slate-700 rounded-2xl p-3 shadow-2xl">
+      <p class="text-xs text-slate-400 mb-2 text-center font-medium">{{ t()['modelos'] }}</p>
+      <div class="flex gap-2">
+        <button (click)="selectModel('atomo')"
+                [class]="'px-4 py-2 rounded-xl text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 ' +
+                (selectedModel() === 'atomo' ? 'bg-violet-700 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700')">
+          {{ t()['modeloAtomo'] }}
+        </button>
+        <button (click)="selectModel('corazon')"
+                [class]="'px-4 py-2 rounded-xl text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 ' +
+                (selectedModel() === 'corazon' ? 'bg-violet-700 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700')">
+          {{ t()['modeloCorazon'] }}
+        </button>
+        <button (click)="selectModel('sistema-solar')"
+                [class]="'px-4 py-2 rounded-xl text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 ' +
+                (selectedModel() === 'sistema-solar' ? 'bg-violet-700 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700')">
+          {{ t()['modeloSistemaSolar'] }}
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Marcador Hiro para imprimir -->
+  <footer class="bg-slate-900 border-t border-slate-700 p-4">
+    <details class="group">
+      <summary class="text-sm text-slate-400 cursor-pointer hover:text-slate-200 transition-colors select-none focus:outline-none focus:ring-2 focus:ring-violet-500 rounded p-1">
+        {{ t()['descargarMarcador'] }} (Hiro)
+      </summary>
+      <div class="mt-3 flex flex-col items-center gap-2">
+        <p class="text-xs text-slate-500">Imprime este marcador y muéstraselo a la cámara:</p>
+        <img src="https://raw.githack.com/AR-js-org/AR.js/master/data/hiro.png"
+             alt="Marcador Hiro para Realidad Aumentada"
+             class="w-40 h-40 border-2 border-slate-600 rounded-lg"
+             loading="lazy">
+        <a href="https://raw.githack.com/AR-js-org/AR.js/master/data/hiro.png"
+           target="_blank"
+           class="text-xs text-violet-400 hover:text-violet-300 underline focus:outline-none focus:ring-2 focus:ring-violet-500 rounded p-1">
+          {{ t()['descargarMarcador'] }}
+        </a>
+      </div>
+    </details>
+  </footer>
+
+</div>

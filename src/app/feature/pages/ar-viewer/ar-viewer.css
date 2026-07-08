@@ -1,0 +1,33 @@
+/* Estilos para el visor de Realidad Aumentada */
+
+/* Asegurar que el canvas de A-Frame se renderice correctamente */
+a-scene {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Ocultar elementos de UI de A-Frame que no queremos mostrar */
+.a-enter-vr,
+.a-enter-ar {
+  display: none !important;
+}
+
+/* Animación de pulso para el spinner de carga */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos para el marcador de accesibilidad */
+:host(.a11y-protanopia) a-scene {
+  filter: url('#protanopia-filter');
+}
+
+/* Responsive: el panel de modelos se adapta en móvil */
+@media (max-width: 640px) {
+  .absolute.bottom-6 {
+    bottom: 1rem;
+  }
+}

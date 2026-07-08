@@ -6,6 +6,7 @@ import { Schedule } from './feature/pages/schedule/schedule';
 import { Projects } from './feature/pages/projects/projects';
 import { Login } from './feature/pages/login/login';
 import { Profile } from './feature/pages/profile/profile';
+import { ArViewer } from './feature/pages/ar-viewer/ar-viewer';
 
 export const routes: Routes = [{
   path: '', redirectTo:'login', pathMatch:'full'},
@@ -15,6 +16,7 @@ export const routes: Routes = [{
     {path:'courses', component:Courses},
     {path:'schedule', component:Schedule},
     {path:'projects', component:Projects},
-    {path:'profile', component:Profile}
+    {path:'profile', component:Profile},
+    {path:'ar-viewer', component:ArViewer}
   ]}
 ];

@@ -91,12 +91,18 @@
     </p>
 
      <a [routerLink]="'profile'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
-       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
-      <lucide-angular [img]="User" class="w-5 h-5" aria-hidden="true"></lucide-angular>
-      {{ t()['profile'] }}
-    </a>
+        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+       <lucide-angular [img]="User" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+       {{ t()['profile'] }}
+     </a>
 
-  </nav>
+     <a [routerLink]="'ar-viewer'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+       <lucide-angular [img]="BoxIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+       {{ t()['realidadAumentada'] }}
+     </a>
+
+   </nav>
 
   <!-- Timer -->
   <div class="p-4 border-t border-slate-700 bg-slate-950">

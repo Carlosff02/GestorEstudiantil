@@ -5,7 +5,7 @@ import {
   Calendar, Briefcase, FolderOpen, Play,
   LucideAngularModule, type LucideIconData, TriangleAlert,
   LogOut,
-  User,
+  User, Box,
 } from 'lucide-angular';
 import { AuthService } from '../../service/auth.service';
 import { CommonModule, TitleCasePipe } from '@angular/common';
@@ -31,7 +31,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     cerrarMenu:         'Cerrar menú',
     abrirPerfil:        'Abrir menú de perfil',
     profile: 'Mi Pefil',
-    cuenta: 'Cuenta'
+    cuenta: 'Cuenta',
+    realidadAumentada: 'Realidad Aumentada'
   },
   en: {
     appName:            'StudySync',
@@ -50,7 +51,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     cerrarMenu:         'Close menu',
     abrirPerfil:        'Open profile menu',
     profile: 'My Profile',
-    cuenta: 'Account'
+    cuenta: 'Account',
+    realidadAumentada: 'Augmented Reality'
   },
   pt: {
     appName:            'StudySync',
@@ -69,7 +71,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     cerrarMenu:         'Fechar menu',
     abrirPerfil:        'Abrir menu de perfil',
     profile: 'Meu Perfil',
-    cuenta: 'Conta'
+    cuenta: 'Conta',
+    realidadAumentada: 'Realidade Aumentada'
   },
   fr: {
     appName:            'StudySync',
@@ -88,7 +91,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     cerrarMenu:         'Fermer le menu',
     abrirPerfil:        'Ouvrir le menu de profil',
     profile: 'Mon Profil',
-    cuenta: 'Compte'
+    cuenta: 'Compte',
+    realidadAumentada: 'Réalité Augmentée'
   },
 };
 
@@ -117,6 +121,7 @@ export class Sidebar {
   readonly BriefcaseIcon: LucideIconData       = Briefcase;
   readonly FolderOpenIcon: LucideIconData      = FolderOpen;
   readonly PlayIcon: LucideIconData            = Play;
+  readonly BoxIcon: LucideIconData             = Box;
   readonly AlertTriangle                       = TriangleAlert;
   readonly LogOut = LogOut;
   readonly User = User;
@@ -197,6 +202,11 @@ handleKeyboardNavigation(event: KeyboardEvent) {
     case 'Digit5':
       event.preventDefault();
       this.router.navigate(['/home/profile']);
+      break;
+
+    case 'Digit6':
+      event.preventDefault();
+      this.router.navigate(['/home/ar-viewer']);
       break;
 
     case 'Escape':
