@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
-import { Bell, LucideAngularModule, X } from 'lucide-angular';
+import { Bell, LucideAngularModule, Menu, X } from 'lucide-angular';
 import { ProyectoMiembroService } from '../../service/proyecto-miembro.service';
 import { PreferenciasService } from '../../../core/service/preferencias.service';
 
@@ -121,10 +121,16 @@ const I18N: Record<Idioma, Record<string, string>> = {
 export class Home {
   readonly Bell = Bell;
   readonly X = X;
+  readonly Menu = Menu;
 
   private readonly authService = inject(AuthService);
   private readonly proyectoMiembroService = inject(ProyectoMiembroService);
   private readonly prefs = inject(PreferenciasService);
+
+  switchView(_target: 'courses' | 'projects'): void {
+    // Handler placeholder (evita errores de compilación por bindings).
+  }
+
 
   user = this.authService.userSignal;
 
