@@ -1,10 +1,10 @@
 @if(!activeProject()){
     <!-- ================= VIEW: PROJECTS ================= -->
     <section id="view-projects" class="view-section space-y-6" [ngClass]="a11yClass()">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-                <h2 class="text-xl font-bold text-slate-900">{{ t()['projectsTitle'] }}</h2>
-                <p class="text-xs text-slate-400">{{ t()['projectsSubtitle'] }}</p>
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900">{{ t()['projectsTitle'] }}</h2>
+                <p class="text-xs sm:text-sm text-slate-400">{{ t()['projectsSubtitle'] }}</p>
             </div>
             <button (click)="creatingProject.set(true)" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-sm flex items-center gap-2">
                 
@@ -241,18 +241,18 @@
 
     <!-- Premium Header -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-6 border-b border-slate-100 gap-4">
-        <div class="flex items-center gap-4">
-            <button (click)="activeProject.set(null)" class="p-2.5 hover:bg-slate-100 bg-white border border-slate-200 rounded-xl text-slate-600 transition-colors">
+        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+            <button (click)="activeProject.set(null)" class="p-2 hover:bg-slate-100 bg-white border border-slate-200 rounded-xl text-slate-600 transition-colors shrink-0">
                 <lucide-angular [img]="ArrowLeft" class="w-4 h-4"></lucide-angular>
             </button>
-            <div>
-                <h2 id="kanban-project-title" class="text-2xl font-black text-slate-900 tracking-tight">{{ t()['taskCenter'] }}</h2>
+            <div class="min-w-0">
+                <h2 id="kanban-project-title" class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight truncate">{{ t()['taskCenter'] }}</h2>
                 <p id="kanban-project-dates" class="text-xs text-slate-400 font-medium">{{ t()['kanbanSub'] }}</p>
             </div>
         </div>
 
         <!-- Right group: Actions & Members -->
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
             <!-- Members Bubble Stack -->
             <div class="flex items-center bg-white border border-slate-200/60 px-3 py-1.5 rounded-xl gap-2 shadow-sm">
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ t()['members'] }}</span>
@@ -286,7 +286,7 @@
     @for (column of columns; track column.id) {
 
       <div
-        class="flex flex-col w-80 shrink-0 bg-[#f4f6f8] rounded-2xl p-4 max-h-full overflow-hidden space-y-4">
+        class="flex flex-col w-72 sm:w-80 shrink-0 bg-[#f4f6f8] rounded-2xl p-3 sm:p-4 max-h-full overflow-hidden space-y-4">
 
         <!-- Header -->
         <div class="flex justify-between items-center px-1">
@@ -319,7 +319,7 @@
           ) {
 
             <div
-              class="task-card bg-white p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md shadow-sm flex flex-col justify-between space-y-3.5 group relative transition-all">
+              class="task-card bg-white p-3 sm:p-4 rounded-2xl border border-slate-100 hover:border-slate-200 hover:shadow-md shadow-sm flex flex-col justify-between space-y-3 group relative transition-all">
 
               <!-- Top -->
               <div class="flex justify-between items-start">

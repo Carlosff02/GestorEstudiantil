@@ -114,6 +114,24 @@
   background-color: #4f46e5;
 }
 
+/* ─── Responsive: evitar overflow horizontal ────────────────────── */
+img, svg, video, canvas, audio, iframe, embed, object {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ─── Touch scrolling suave en contenedores con scroll ──────────── */
+.overflow-x-auto, .overflow-y-auto, .overflow-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Mejorar apariencia de scroll nativo en móvil ──────────────── */
+@media (max-width: 767px) {
+  .overflow-x-auto {
+    scrollbar-width: thin;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════
    MEJORAS WCAG 2.1 - ACCESIBILIDAD GLOBAL
    ═══════════════════════════════════════════════════════════ */

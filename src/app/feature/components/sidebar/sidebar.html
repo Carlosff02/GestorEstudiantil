@@ -1,164 +1,204 @@
 <aside
   id="sidebar"
-  [class]="'bg-slate-900 border-r border-slate-700 w-64 h-full flex flex-col fixed md:relative z-30 transition-transform duration-300 transform -translate-x-full md:translate-x-0 ' + a11yClass()"
+  [class]="'sidebar-dark h-screen md:h-full flex flex-col fixed top-0 left-0 md:relative z-50 transition-all duration-300 ease-in-out transform shadow-2xl md:shadow-none ' + (sidebarOpen() ? 'translate-x-0' : '-translate-x-full') + ' md:translate-x-0 ' + (showCollapsed() ? 'w-20' : 'w-64') + ' ' + a11yClass()"
   [attr.lang]="user()?.idioma || 'es'"
   role="navigation"
   [attr.aria-label]="t()['appName']"
 >
 
+  <!-- Botón flotante de colapsar/expandir: pegado al borde derecho, centrado verticalmente -->
+  <button
+    class="sidebar-toggle-btn hidden md:flex absolute top-130 -right-3.5 w-7 h-7 rounded-full items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 z-40"
+    (click)="toggleCollapsed()"
+    [attr.aria-label]="showCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
+  >
+    <lucide-angular [img]="showCollapsed() ? ChevronsRightIcon : ChevronsLeftIcon" class="w-3.5 h-3.5" aria-hidden="true"></lucide-angular>
+  </button>
+
   <!-- Cabecera -->
-  <div class="h-16 flex items-center px-6 border-b border-slate-700">
-    <div class="flex items-center gap-2 text-violet-400" aria-hidden="true">
-      <lucide-angular [img]="LayersIcon" class="w-6 h-6"></lucide-angular>
-      <span class="font-bold text-lg tracking-tight text-violet-300">{{ t()['appName'] }}</span>
+  <div class="sidebar-header h-16 flex items-center px-4 shrink-0" [class.justify-center]="showCollapsed()" [class.justify-between]="!showCollapsed()">
+    <div class="flex items-center gap-2 sidebar-logo min-w-0" aria-hidden="true">
+      <div class="w-9 h-9 rounded-xl sidebar-avatar flex items-center justify-center shrink-0">
+        <lucide-angular [img]="LayersIcon" class="w-5 h-5 text-white"></lucide-angular>
+      </div>
+      <span class="font-bold text-lg tracking-tight sidebar-text-primary truncate" [class.hidden]="showCollapsed()">
+        {{ t()['appName'] }}
+      </span>
     </div>
+
     <button
-      class="ml-auto md:hidden text-slate-400 hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded"
-      onclick="toggleSidebar()"
+      class="md:hidden shrink-0 sidebar-icon-btn focus:outline-none focus:ring-2 focus:ring-violet-500 rounded p-1"
+      (click)="toggleSidebar()"
       [attr.aria-label]="t()['cerrarMenu']"
     >
-      <lucide-angular [img]="XIcon" class="w-5 h-5"></lucide-angular>
+      <lucide-angular [img]="XIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
     </button>
   </div>
 
-  <!-- Perfil de usuario -->
-  <div class="p-4 border-b border-slate-700">
-    <div
-      class="flex items-center gap-3 hover:bg-slate-800 p-2 rounded-lg cursor-pointer transition-colors"
-      role="button"
-      tabindex="0"
-      [attr.aria-label]="t()['abrirPerfil']"
-      (keydown.enter)="toggleProfileMenu.set(true)"
-    >
-      <div
-        class="w-10 h-10 rounded-full bg-gradient-to-tr from-violet-700 to-violet-400 text-white flex items-center justify-center font-bold shadow-sm"
-        aria-hidden="true"
-      >
-        {{ (user()?.nombres || '')[0] }}{{ (user()?.apellidos || '')[0] }}
-      </div>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-semibold text-slate-100 truncate">{{ user()?.nombres || '' }}</p>
-        <p class="text-xs text-slate-400 truncate">
-          {{ user()?.rol ? (user()?.rol | titlecase) : '' }}
-        </p>
-      </div>
-      <lucide-angular
-        (click)="toggleProfileMenu.set(true)"
-        [img]="LogOut"
-        class="w-4 h-4 text-slate-500"
-        aria-hidden="true"
-      ></lucide-angular>
-    </div>
-  </div>
-
   <!-- Navegación -->
-  <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" [attr.aria-label]="t()['seccionPrincipal']">
+  <nav class="sidebar-nav flex-1 overflow-y-auto py-4 px-3 space-y-1" [attr.aria-label]="t()['seccionPrincipal']">
 
-    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2" aria-hidden="true">
-      {{ t()['seccionPrincipal'] }}
-    </p>
+    @if (!showCollapsed()) {
+      <p class="px-3 text-xs font-semibold sidebar-text-faint uppercase tracking-wider mb-2" aria-hidden="true">
+        {{ t()['seccionPrincipal'] }}
+      </p>
+    }
 
-    <a [routerLink]="'dashboard'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
-       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
-      <lucide-angular [img]="LayoutDashboardIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
-      {{ t()['dashboard'] }}
+    <a [routerLink]="'dashboard'" (click)="onNavClick()" [routerLinkActive]="'sidebar-link-active'"
+       [title]="showCollapsed() ? t()['dashboard'] : ''"
+       class="sidebar-link nav-link flex items-center gap-3 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+       [class]="showCollapsed() ? 'justify-center px-0' : 'px-3'">
+      <lucide-angular [img]="LayoutDashboardIcon" class="w-5 h-5 shrink-0" aria-hidden="true"></lucide-angular>
+      <span [class.hidden]="showCollapsed()">{{ t()['dashboard'] }}</span>
     </a>
 
-    <a [routerLink]="'courses'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
-       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
-      <lucide-angular [img]="BookOpenIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
-      {{ t()['misCursos'] }}
+    <a [routerLink]="'courses'" (click)="onNavClick()" [routerLinkActive]="'sidebar-link-active'"
+       [title]="showCollapsed() ? t()['misCursos'] : ''"
+       class="sidebar-link nav-link flex items-center gap-3 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+       [class]="showCollapsed() ? 'justify-center px-0' : 'px-3'">
+      <lucide-angular [img]="BookOpenIcon" class="w-5 h-5 shrink-0" aria-hidden="true"></lucide-angular>
+      <span [class.hidden]="showCollapsed()">{{ t()['misCursos'] }}</span>
     </a>
 
-    <a [routerLink]="'schedule'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
-       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
-      <lucide-angular [img]="CalendarIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
-      {{ t()['horario'] }}
+    <a [routerLink]="'schedule'" (click)="onNavClick()" [routerLinkActive]="'sidebar-link-active'"
+       [title]="showCollapsed() ? t()['horario'] : ''"
+       class="sidebar-link nav-link flex items-center gap-3 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+       [class]="showCollapsed() ? 'justify-center px-0' : 'px-3'">
+      <lucide-angular [img]="CalendarIcon" class="w-5 h-5 shrink-0" aria-hidden="true"></lucide-angular>
+      <span [class.hidden]="showCollapsed()">{{ t()['horario'] }}</span>
     </a>
 
-    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2" aria-hidden="true">
-      {{ t()['seccionProyectos'] }}
-    </p>
+    <div class="mx-2 sidebar-section-border my-3"></div>
 
-    <a [routerLink]="'projects'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
-       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
-      <lucide-angular [img]="BriefcaseIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
-      {{ t()['misProyectos'] }}
+    @if (!showCollapsed()) {
+      <p class="px-3 text-xs font-semibold sidebar-text-faint uppercase tracking-wider mb-2" aria-hidden="true">
+        {{ t()['seccionProyectos'] }}
+      </p>
+    }
+
+    <a [routerLink]="'projects'" (click)="onNavClick()" [routerLinkActive]="'sidebar-link-active'"
+       [title]="showCollapsed() ? t()['misProyectos'] : ''"
+       class="sidebar-link nav-link flex items-center gap-3 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+       [class]="showCollapsed() ? 'justify-center px-0' : 'px-3'">
+      <lucide-angular [img]="BriefcaseIcon" class="w-5 h-5 shrink-0" aria-hidden="true"></lucide-angular>
+      <span [class.hidden]="showCollapsed()">{{ t()['misProyectos'] }}</span>
     </a>
 
-    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2" aria-hidden="true">
-      {{ t()['cuenta'] }}
-    </p>
+    <div class="mx-2 sidebar-section-border my-3"></div>
 
-     <a [routerLink]="'profile'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
-       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
-      <lucide-angular [img]="User" class="w-5 h-5" aria-hidden="true"></lucide-angular>
-      {{ t()['profile'] }}
+    @if (!showCollapsed()) {
+      <p class="px-3 text-xs font-semibold sidebar-text-faint uppercase tracking-wider mb-2" aria-hidden="true">
+        {{ t()['cuenta'] }}
+      </p>
+    }
+
+    <a [routerLink]="'profile'" (click)="onNavClick()" [routerLinkActive]="'sidebar-link-active'"
+       [title]="showCollapsed() ? t()['profile'] : ''"
+       class="sidebar-link nav-link flex items-center gap-3 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+       [class]="showCollapsed() ? 'justify-center px-0' : 'px-3'">
+      <lucide-angular [img]="User" class="w-5 h-5 shrink-0" aria-hidden="true"></lucide-angular>
+      <span [class.hidden]="showCollapsed()">{{ t()['profile'] }}</span>
     </a>
 
   </nav>
 
   <!-- Timer -->
-  <div class="p-4 border-t border-slate-700 bg-slate-950">
-    <div id="tracker-widget"
-         class="flex items-center justify-between bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-sm"
-         role="timer"
-         [attr.aria-label]="t()['tiempoEstudio']">
-      <div class="flex items-center gap-3">
-        <div class="indicator w-3 h-3 rounded-full bg-slate-600" aria-hidden="true"></div>
-        <div>
-          <p id="timer-label" class="text-[10px] font-semibold text-slate-500 uppercase">
-            {{ t()['tiempoEstudio'] }}
-          </p>
-          <p id="timer-display" class="text-sm font-bold font-mono text-slate-100" aria-live="polite">00:00:00</p>
+  @if (!showCollapsed()) {
+    <div class="p-4 sidebar-footer">
+      <div id="tracker-widget"
+           class="sidebar-timer flex items-center justify-between p-3 rounded-xl shadow-sm"
+           role="timer"
+           [attr.aria-label]="t()['tiempoEstudio']">
+        <div class="flex items-center gap-3">
+          <div class="indicator w-3 h-3 rounded-full sidebar-dot" aria-hidden="true"></div>
+          <div>
+            <p id="timer-label" class="text-[10px] font-semibold sidebar-text-faint uppercase">
+              {{ t()['tiempoEstudio'] }}
+            </p>
+            <p id="timer-display" class="text-sm font-bold font-mono sidebar-text-primary" aria-live="polite">00:00:00</p>
+          </div>
         </div>
+        <button
+          id="btn-toggle-timer"
+          onclick="toggleTimer()"
+          class="w-8 h-8 rounded-full sidebar-play-btn flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+          [attr.aria-label]="t()['tiempoEstudio']"
+        >
+          <lucide-angular [img]="PlayIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
+        </button>
       </div>
-      <button
-        id="btn-toggle-timer"
-        onclick="toggleTimer()"
-        class="w-8 h-8 rounded-full bg-slate-800 hover:bg-violet-900 flex items-center justify-center text-slate-400 hover:text-violet-300 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
-        [attr.aria-label]="t()['tiempoEstudio']"
+    </div>
+  }
+
+  <!-- Perfil de usuario -->
+  <div class="sidebar-footer p-3" [class.flex]="showCollapsed()" [class.justify-center]="showCollapsed()">
+    <div
+      class="flex items-center gap-3 sidebar-profile-hover p-2 rounded-xl cursor-pointer transition-colors"
+      [class.justify-center]="showCollapsed()"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="t()['abrirPerfil']"
+      [attr.title]="showCollapsed() ? user()?.nombres : ''"
+      (click)="toggleProfileMenu.set(true)"
+      (keydown.enter)="toggleProfileMenu.set(true)"
+    >
+      <div
+        class="w-9 h-9 rounded-full sidebar-avatar text-white flex items-center justify-center font-bold text-xs shrink-0"
+        aria-hidden="true"
       >
-        <lucide-angular [img]="PlayIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
-      </button>
+        {{ (user()?.nombres || '')[0] }}{{ (user()?.apellidos || '')[0] }}
+      </div>
+      @if (!showCollapsed()) {
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold sidebar-text-primary truncate">{{ user()?.nombres || '' }}</p>
+          <p class="text-xs sidebar-text-muted truncate">
+            {{ user()?.rol ? (user()?.rol | titlecase) : '' }}
+          </p>
+        </div>
+        <lucide-angular
+          [img]="LogOut"
+          class="w-4 h-4 sidebar-icon-btn"
+          aria-hidden="true"
+        ></lucide-angular>
+      }
     </div>
   </div>
 </aside>
 
 @if(toggleProfileMenu()) {
 <div
-  class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  class="fixed inset-0 sidebar-modal-overlay backdrop-blur-sm z-50 flex items-center justify-center p-4"
   role="dialog"
   aria-modal="true"
   [attr.aria-labelledby]="'modal-title'"
   [attr.aria-describedby]="'modal-desc'"
 >
   <div
-    [class]="'bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl w-full max-w-sm flex flex-col p-6 space-y-5 ' + a11yClass()"
+    [class]="'sidebar-modal rounded-3xl shadow-2xl w-full max-w-sm flex flex-col p-6 space-y-5 ' + a11yClass()"
   >
     <div class="flex items-center gap-3">
-      <div class="w-12 h-12 bg-violet-900/50 text-violet-300 rounded-2xl flex items-center justify-center shrink-0" aria-hidden="true">
+      <div class="w-12 h-12 sidebar-modal-icon rounded-2xl flex items-center justify-center shrink-0" aria-hidden="true">
         <lucide-angular [img]="AlertTriangle" class="w-6 h-6"></lucide-angular>
       </div>
       <div>
-        <h3 id="modal-title" class="text-lg font-bold text-slate-100">
+        <h3 id="modal-title" class="text-lg font-bold sidebar-text-primary">
           {{ t()['cerrarSesionTitulo'] }}
         </h3>
-        <p id="modal-desc" class="text-xs text-slate-400 mt-0.5">
+        <p id="modal-desc" class="text-xs sidebar-text-muted mt-0.5">
           {{ t()['cerrarSesionDesc'] }}
         </p>
       </div>
     </div>
 
-    <div class="text-sm text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-700">
+    <div class="text-sm sidebar-modal-body p-3 rounded-xl">
       {{ t()['cerrarSesionBody'] }}
-      <span class="font-semibold text-slate-100">{{ t()['appName'] }}</span>?
+      <span class="font-semibold sidebar-text-primary">{{ t()['appName'] }}</span>?
     </div>
 
     <div class="flex gap-3 justify-end">
       <button
         (click)="toggleProfileMenu.set(false)"
-        class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
+        class="flex-1 py-3 sidebar-btn-cancel font-bold text-xs rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
       >
         {{ t()['volverEstudio'] }}
       </button>
