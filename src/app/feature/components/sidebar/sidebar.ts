@@ -125,7 +125,6 @@ export class Sidebar {
 
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly prefs = inject(PreferenciasService);
 
   user              = this.authService.userSignal;
   toggleProfileMenu = signal(false);
@@ -205,4 +204,5 @@ handleKeyboardNavigation(event: KeyboardEvent) {
       this.toggleProfileMenu.set(true);
       break;
   }
+}
 }
