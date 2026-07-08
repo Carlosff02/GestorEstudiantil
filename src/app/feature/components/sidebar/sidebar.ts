@@ -10,7 +10,6 @@ import { AuthService } from '../../service/auth.service';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 
 type Idioma = 'es' | 'en' | 'pt' | 'fr';
-type PerfilAccesibilidad = 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'baja_vision' | 'ceguera';
 
 const I18N: Record<Idioma, Record<string, string>> = {
   es: {
@@ -163,13 +162,10 @@ export class Sidebar {
   }
 
   private idioma = computed<Idioma>(() => {
-    const raw = this.user()?.idioma as Idioma;
-    return raw && raw in I18N ? raw : 'es';
-  });
-
-  private perfil = computed<PerfilAccesibilidad>(() => {
-    const raw = this.user()?.perfilAccesibilidad as PerfilAccesibilidad;
-    return raw && raw in A11Y_CLASSES ? raw : 'normal';
+    const uiIdioma = this.prefs.idioma();
+    if (uiIdioma in I18N) return uiIdioma;
+    const cuentaIdioma = this.user()?.idioma as Idioma;
+    return cuentaIdioma && cuentaIdioma in I18N ? cuentaIdioma : 'es';
   });
 
   t = computed(() => I18N[this.idioma()]);

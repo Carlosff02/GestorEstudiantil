@@ -4,11 +4,11 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { Bell, LucideAngularModule, Menu, X } from 'lucide-angular';
 import { ProyectoMiembroService } from '../../service/proyecto-miembro.service';
+import { PreferenciasService } from '../../../core/service/preferencias.service';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 type Idioma = 'es' | 'en' | 'pt' | 'fr';
-type PerfilAccesibilidad = 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'baja_vision' | 'ceguera';
 
 // ─── Diccionario i18n ─────────────────────────────────────────────────────────
 
@@ -110,15 +110,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
   },
 };
 
-const A11Y_CLASSES: Record<PerfilAccesibilidad, string> = {
-  normal:       '',
-  protanopia:   'a11y-protanopia',
-  deuteranopia: 'a11y-deuteranopia',
-  tritanopia:   'a11y-tritanopia',
-  baja_vision:  'a11y-baja-vision',
-  ceguera:      'a11y-ceguera',
-};
-
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 @Component({
@@ -134,6 +125,7 @@ export class Home {
 
   private readonly authService = inject(AuthService);
   private readonly proyectoMiembroService = inject(ProyectoMiembroService);
+  private readonly prefs = inject(PreferenciasService);
 
   switchView(_target: 'courses' | 'projects'): void {
     // Handler placeholder (evita errores de compilación por bindings).
@@ -151,18 +143,20 @@ export class Home {
 
   notificationModalOpen = signal(false);
 
+  /** Idioma basado en preferencia de UI (para traducciones), con fallback al de la cuenta */
   private idioma = computed<Idioma>(() => {
-    const raw = this.user()?.idioma as Idioma;
-    return raw && raw in I18N ? raw : 'es';
+    // Primero usar el idioma de visualización
+    const uiIdioma = this.prefs.idioma();
+    if (uiIdioma in I18N) return uiIdioma;
+    // Fallback al idioma de la cuenta
+    const cuentaIdioma = this.user()?.idioma as Idioma;
+    return cuentaIdioma && cuentaIdioma in I18N ? cuentaIdioma : 'es';
   });
 
-  private perfil = computed<PerfilAccesibilidad>(() => {
-    const raw = this.user()?.perfilAccesibilidad as PerfilAccesibilidad;
-    return raw && raw in A11Y_CLASSES ? raw : 'normal';
-  });
+  /** Usa el PreferenciasService para obtener la clase de accesibilidad de visualización */
+  a11yClass = this.prefs.a11yClass;
 
-  t         = computed(() => I18N[this.idioma()]);
-  a11yClass = computed(() => A11Y_CLASSES[this.perfil()]);
+  t = computed(() => I18N[this.idioma()]);
 
   aceptarInvitacion(proyectoId:number){
     const idUsuario = this.user()?.idUsuario;

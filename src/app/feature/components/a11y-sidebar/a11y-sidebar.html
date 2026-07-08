@@ -1,0 +1,91 @@
+<!-- Botón flotante de accesibilidad -->
+<button
+  class="a11y-fab"
+  [class]="prefs.a11yClass()"
+  (click)="toggle()"
+  [attr.aria-expanded]="prefs.sidebarAbierto()"
+  aria-controls="a11y-panel"
+  [attr.aria-label]="prefs.t().btnA11y"
+  title="{{ prefs.t().btnA11y }}"
+>
+  <lucide-angular [img]="AccessibilityIcon" class="a11y-fab__icon"></lucide-angular>
+</button>
+
+<!-- Sidebar lateral de accesibilidad -->
+@if (prefs.sidebarAbierto()) {
+  <aside
+    id="a11y-panel"
+    class="a11y-sidebar"
+    [class]="prefs.a11yClass()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="a11y-title"
+    [attr.lang]="prefs.idioma()"
+  >
+    <!-- Cabecera -->
+    <div class="a11y-sidebar__header">
+      <div class="a11y-sidebar__title-wrap">
+        <lucide-angular [img]="AccessibilityIcon" class="a11y-sidebar__icon" aria-hidden="true"></lucide-angular>
+        <div>
+          <h2 id="a11y-title" class="a11y-sidebar__title">{{ prefs.t().sidebarTitulo }}</h2>
+          <p class="a11y-sidebar__subtitle">{{ prefs.t().sidebarSubtitulo }}</p>
+        </div>
+      </div>
+      <button
+        class="a11y-sidebar__close"
+        (click)="cerrar()"
+        [attr.aria-label]="prefs.t().btnCerrar"
+      >
+        <lucide-angular [img]="XIcon" class="a11y-sidebar__close-icon"></lucide-angular>
+      </button>
+    </div>
+
+    <!-- Contenido -->
+    <div class="a11y-sidebar__content">
+      <!-- Selector de idioma -->
+      <div class="a11y-field">
+        <label class="a11y-field__label" for="a11y-idioma">
+          <span class="a11y-field__label-text">{{ prefs.t().idiomaLabel }}</span>
+        </label>
+        <select
+          id="a11y-idioma"
+          class="a11y-field__select"
+          [ngModel]="prefs.idioma()"
+          (ngModelChange)="onIdiomaChange($event)"
+        >
+          @for (item of idiomas; track item.value) {
+            <option [value]="item.value">{{ prefs.t()[item.labelKey] }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Selector de perfil de accesibilidad -->
+      <div class="a11y-field">
+        <label class="a11y-field__label" for="a11y-perfil">
+          <span class="a11y-field__label-text">{{ prefs.t().perfilLabel }}</span>
+        </label>
+        <select
+          id="a11y-perfil"
+          class="a11y-field__select"
+          [ngModel]="prefs.perfil()"
+          (ngModelChange)="onPerfilChange($event)"
+        >
+          @for (item of perfiles; track item.value) {
+            <option [value]="item.value">{{ prefs.t()[item.labelKey] }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Botón restablecer -->
+      <button class="a11y-reset" (click)="restablecer()">
+        <lucide-angular [img]="RotateCcwIcon" class="a11y-reset__icon" aria-hidden="true"></lucide-angular>
+        {{ prefs.t().restablecerBtn }}
+      </button>
+    </div>
+  </aside>
+}
+
+<!-- Región live para anuncios a lectores de pantalla -->
+<div class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+  {{ prefs.announce() }}
+</div>

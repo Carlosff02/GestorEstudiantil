@@ -34,19 +34,35 @@
   overflow: hidden;
 }
 
-/* Protanopia: ausencia de conos rojos */
-.a11y-protanopia {
-  filter: url(#filter-protanopia) !important;
-}
-
-/* Deuteranopia: ausencia de conos verdes */
-.a11y-deuteranopia {
-  filter: url(#filter-deuteranopia) !important;
-}
-
-/* Tritanopia: ausencia de conos azules */
+/* Dalcanismo: aplicación segura de filtros SVG
+   IMPORTANTE: Los filtros SVG aplicados a elementos con altura fija (100vh, 100%)
+   pueden causar que el contenido se encoja. La solución es:
+   1. Usar transform para forzar composición en GPU
+   2. Aplicar dimensiones min-height en lugar de height
+   3. O aplicar el filtro solo a elementos específicos (no contenedores principales) */
+.a11y-protanopia,
+.a11y-deuteranopia,
 .a11y-tritanopia {
-  filter: url(#filter-tritanopia) !important;
+  transform: translateZ(0);
+  will-change: filter;
+  /* Forzar que el contenido ocupe al menos la altura completa */
+  min-height: 100vh;
+}
+
+/* Filtros específicos */
+.a11y-protanopia {
+  filter: url(#filter-protanopia);
+  -webkit-filter: url(#filter-protanopia);
+}
+
+.a11y-deuteranopia {
+  filter: url(#filter-deuteranopia);
+  -webkit-filter: url(#filter-deuteranopia);
+}
+
+.a11y-tritanopia {
+  filter: url(#filter-tritanopia);
+  -webkit-filter: url(#filter-tritanopia);
 }
 
 /* ── Baja visión ─────────────────────────────────────────────────────────── */

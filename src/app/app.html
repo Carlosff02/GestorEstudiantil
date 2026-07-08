@@ -1,10 +1,12 @@
+<!-- Contenedor principal con clase de accesibilidad aplicada -->
 <div
-  [class.a11y-baja-vision]="user()?.perfilAccesibilidad === 'baja_vision'"
-  [class.a11y-protanopia]="user()?.perfilAccesibilidad === 'protanopia'"
-  [class.a11y-deuteranopia]="user()?.perfilAccesibilidad === 'deuteranopia'"
-  [class.a11y-tritanopia]="user()?.perfilAccesibilidad === 'tritanopia'"
-  [class.a11y-ceguera]="user()?.perfilAccesibilidad === 'ceguera'">
+  [class]="a11yClass()"
+  [lang]="idioma()"
+>
 
   <router-outlet></router-outlet>
+
+  <!-- Botón flotante de accesibilidad + sidebar lateral -->
+  <app-a11y-sidebar></app-a11y-sidebar>
 
 </div>

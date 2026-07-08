@@ -1,0 +1,381 @@
+/* ─── Botón flotante (FAB) ──────────────────────────────────────────────────── */
+.a11y-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 999;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 10px 15px -3px rgba(79, 70, 229, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.a11y-fab:hover {
+  transform: scale(1.08);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 20px 25px -5px rgba(79, 70, 229, 0.4);
+}
+
+.a11y-fab:focus-visible {
+  outline: 3px solid #4338ca;
+  outline-offset: 3px;
+}
+
+.a11y-fab:active {
+  transform: scale(0.95);
+}
+
+.a11y-fab__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* ─── Sidebar lateral ──────────────────────────────────────────────────────── */
+.a11y-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 20rem;
+  max-width: calc(100vw - 3rem);
+  z-index: 1000;
+  background: #fff;
+  border-left: 1px solid #e2e8f0;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ─── Cabecera ────────────────────────────────────────────────────────────── */
+.a11y-sidebar__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #fff;
+}
+
+.a11y-sidebar__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.a11y-sidebar__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  opacity: 0.9;
+}
+
+.a11y-sidebar__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.a11y-sidebar__subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.a11y-sidebar__close {
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 0.5rem;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.a11y-sidebar__close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.a11y-sidebar__close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.a11y-sidebar__close-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ─── Contenido ────────────────────────────────────────────────────────────── */
+.a11y-sidebar__content {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+}
+
+/* ─── Campo de formulario ──────────────────────────────────────────────────── */
+.a11y-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.a11y-field__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.a11y-field__label-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.a11y-field__select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.625rem;
+  background: #f8fafc;
+  font-size: 0.9375rem;
+  color: #1e293b;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+.a11y-field__select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  background-color: #fff;
+}
+
+.a11y-field__select:hover {
+  border-color: #94a3b8;
+  background-color: #fff;
+}
+
+/* ─── Botón restablecer ────────────────────────────────────────────────────── */
+.a11y-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-top: auto;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.625rem;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.a11y-reset:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.a11y-reset:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.a11y-reset__icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* ─── Utility: solo lectores de pantalla ─────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PERFILES DE ACCESIBILIDAD
+   Se aplican al sidebar cuando hay un perfil activo
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Protanopia / Deuteranopia ─────────────────────────────────────────────── */
+.a11y-sidebar.a11y-protanopia,
+.a11y-sidebar.a11y-deuteranopia {
+  /* El sidebar mantiene su estructura, pero los selects usan colores seguros */
+}
+
+.a11y-sidebar.a11y-protanopia .a11y-field__select:focus,
+.a11y-sidebar.a11y-deuteranopia .a11y-field__select:focus {
+  box-shadow: 0 0 0 3px rgba(0, 114, 178, 0.3);
+  border-color: #0072B2;
+}
+
+.a11y-sidebar.a11y-protanopia .a11y-fab,
+.a11y-sidebar.a11y-deuteranopia .a11y-fab {
+  background: linear-gradient(135deg, #0072B2 0%, #005a8f 100%);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 10px 15px -3px rgba(0, 114, 178, 0.3);
+}
+
+/* ── Tritanopia ───────────────────────────────────────────────────────────── */
+.a11y-sidebar.a11y-tritanopia {
+  /* Selector de opción más distinguible */
+}
+
+.a11y-sidebar.a11y-tritanopia .a11y-field__select:focus {
+  box-shadow: 0 0 0 3px rgba(213, 94, 0, 0.3);
+  border-color: #D55E00;
+}
+
+.a11y-sidebar.a11y-tritanopia .a11y-fab {
+  background: linear-gradient(135deg, #D55E00 0%, #b35000 100%);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 10px 15px -3px rgba(213, 94, 0, 0.3);
+}
+
+/* ── Baja visión ───────────────────────────────────────────────────────────── */
+.a11y-sidebar.a11y-baja-vision {
+  font-size: 1.15rem;
+}
+
+.a11y-sidebar.a11y-baja-vision .a11y-field__label-text {
+  font-size: 1rem;
+}
+
+.a11y-sidebar.a11y-baja-vision .a11y-field__select {
+  font-size: 1.05rem;
+  padding: 0.9rem 1rem;
+}
+
+.a11y-sidebar.a11y-baja-vision .a11y-reset {
+  font-size: 1rem;
+}
+
+.a11y-sidebar.a11y-baja-vision .a11y-fab {
+  width: 4rem;
+  height: 4rem;
+  bottom: 2rem;
+  right: 2rem;
+}
+
+.a11y-sidebar.a11y-baja-vision .a11y-fab__icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.a11y-sidebar.a11y-baja-vision :focus-visible {
+  outline-width: 4px;
+  outline-offset: 3px;
+}
+
+/* ── Ceguera (alto contraste) ─────────────────────────────────────────────── */
+.a11y-sidebar.a11y-ceguera {
+  background: #000;
+  color: #fff;
+  border-left: 3px solid #fff;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-sidebar__header {
+  background: #000;
+  border-bottom-color: #fff;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-sidebar__title,
+.a11y-sidebar.a11y-ceguera .a11y-sidebar__subtitle {
+  color: #fff;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-sidebar__close {
+  background: #fff;
+  color: #000;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-sidebar__close:hover {
+  background: #e5e5e5;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-field__label-text {
+  color: #fff;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-field__select {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-field__select:focus {
+  outline: 4px solid #ffd400;
+  outline-offset: 3px;
+  border-color: #ffd400;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-reset {
+  border-color: #fff;
+  color: #fff;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-reset:hover {
+  background: #1a1a1a;
+}
+
+.a11y-sidebar.a11y-ceguera :focus-visible {
+  outline: 4px solid #ffd400;
+  outline-offset: 3px;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-fab {
+  background: #000;
+  border: 3px solid #fff;
+}
+
+.a11y-sidebar.a11y-ceguera .a11y-fab:focus-visible {
+  outline-color: #ffd400;
+}

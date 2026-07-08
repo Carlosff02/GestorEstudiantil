@@ -14,11 +14,11 @@ import {
   ListIcon,
 } from 'lucide-angular';
 import { AuthService } from '../../service/auth.service';
+import { PreferenciasService } from '../../../core/service/preferencias.service';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 type Idioma = 'es' | 'en' | 'pt' | 'fr';
-type PerfilAccesibilidad = 'normal' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'baja_vision' | 'ceguera';
 
 // ─── Diccionario i18n ─────────────────────────────────────────────────────────
 
@@ -105,15 +105,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
   },
 };
 
-const A11Y_CLASSES: Record<PerfilAccesibilidad, string> = {
-  normal:       '',
-  protanopia:   'a11y-protanopia',
-  deuteranopia: 'a11y-deuteranopia',
-  tritanopia:   'a11y-tritanopia',
-  baja_vision:  'a11y-baja-vision',
-  ceguera:      'a11y-ceguera',
-};
-
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 @Component({
@@ -146,18 +137,19 @@ export class Dashboard {
 
   // ─── i18n / a11y ───────────────────────────────────────────────────────────
 
-  private idioma = computed<Idioma>(() => {
-    const raw = this.user()?.idioma as Idioma;
-    return raw && raw in I18N ? raw : 'es';
-  });
+  private readonly prefs = inject(PreferenciasService);
 
-  private perfil = computed<PerfilAccesibilidad>(() => {
-    const raw = this.user()?.perfilAccesibilidad as PerfilAccesibilidad;
-    return raw && raw in A11Y_CLASSES ? raw : 'normal';
+  private idioma = computed<Idioma>(() => {
+    // Primero usar el idioma de visualización
+    const uiIdioma = this.prefs.idioma();
+    if (uiIdioma in I18N) return uiIdioma;
+    // Fallback al idioma de la cuenta
+    const cuentaIdioma = this.user()?.idioma as Idioma;
+    return cuentaIdioma && cuentaIdioma in I18N ? cuentaIdioma : 'es';
   });
 
   t         = computed(() => I18N[this.idioma()]);
-  a11yClass = computed(() => A11Y_CLASSES[this.perfil()]);
+  a11yClass = this.prefs.a11yClass;
 
   // ─── Nombre del usuario ────────────────────────────────────────────────────
 

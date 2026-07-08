@@ -51,7 +51,7 @@
                         <span class="font-semibold text-[10px] bg-slate-100 text-slate-700 px-1 py-0.5 rounded uppercase">
                           {{ getDayShort(session.horaInicio) }}
                         </span>
-                        <span [title]="session.nombre" class="truncate max-w-[80px]">{{ session.nombre }}</span>
+                        <span [title]="session.nombre" class="truncate max-w-20">{{ session.nombre }}</span>
                         <span class="text-slate-400">
                           {{ formatTime(session.horaInicio) }}-{{ formatTime(session.horaFin) }} ({{ t()['aulaSala'] }} {{ session.aula }})
                         </span>
