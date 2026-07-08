@@ -6,8 +6,8 @@
   <section id="view-courses" class="view-section space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-slate-900">{{ t()['misCursos'] }}</h2>
-        <p class="text-slate-500 mt-1 text-sm sm:text-base">{{ t()['misCursosDesc'] }}</p>
+        <h2 class="text-2xl font-bold text-slate-900">{{ t()['misCursos'] }}</h2>
+        <p class="text-slate-500 mt-1">{{ t()['misCursosDesc'] }}</p>
       </div>
       <button (click)="openCourseModal(null)"
               class="bg-primary-600 hover:bg-primary-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all focus:outline-none focus:ring-2 focus:ring-primary-400">
@@ -93,7 +93,7 @@
         </button>
         <div>
           <div class="flex items-center gap-2">
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 truncate max-w-[180px] sm:max-w-none">{{ activeCourse$.nombre }}</h2>
+            <h2 class="text-2xl font-bold text-slate-900">{{ activeCourse$.nombre }}</h2>
             <button class="p-1 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300"
                     [title]="t()['configurarCurso']"
                     [attr.aria-label]="t()['configurarCurso']">
@@ -108,7 +108,7 @@
     <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
 
       <!-- Panel izquierdo: lista de sesiones -->
-      <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden h-auto max-h-[200px] lg:max-h-none">
+      <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden h-[300px] lg:h-auto">
         <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
           <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
             <lucide-angular [img]="ListIcon" class="w-4 h-4 text-primary-500" aria-hidden="true"></lucide-angular>
