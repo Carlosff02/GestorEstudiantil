@@ -1,10 +1,10 @@
-import { Component, computed, HostListener, inject, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, signal, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import {
   Layers, X, ChevronDown, LayoutDashboard, BookOpen,
   Calendar, Briefcase, FolderOpen, Play,
   LucideAngularModule, type LucideIconData, TriangleAlert,
-  LogOut,
+  LogOut, Menu,
   User, Box,
 } from 'lucide-angular';
 import { AuthService } from '../../service/auth.service';
@@ -30,6 +30,7 @@ const I18N: Record<Idioma, Record<string, string>> = {
     confirmarSalida:    'Sí, cerrar sesión',
     cerrarMenu:         'Cerrar menú',
     abrirPerfil:        'Abrir menú de perfil',
+    abrirMenu:          'Abrir menú de navegación',
     profile: 'Mi Pefil',
     cuenta: 'Cuenta',
     realidadAumentada: 'Realidad Aumentada'
@@ -50,6 +51,7 @@ const I18N: Record<Idioma, Record<string, string>> = {
     confirmarSalida:    'Yes, sign out',
     cerrarMenu:         'Close menu',
     abrirPerfil:        'Open profile menu',
+    abrirMenu:          'Open navigation menu',
     profile: 'My Profile',
     cuenta: 'Account',
     realidadAumentada: 'Augmented Reality'
@@ -70,6 +72,7 @@ const I18N: Record<Idioma, Record<string, string>> = {
     confirmarSalida:    'Sim, sair',
     cerrarMenu:         'Fechar menu',
     abrirPerfil:        'Abrir menu de perfil',
+    abrirMenu:          'Abrir menu de navegação',
     profile: 'Meu Perfil',
     cuenta: 'Conta',
     realidadAumentada: 'Realidade Aumentada'
@@ -90,6 +93,7 @@ const I18N: Record<Idioma, Record<string, string>> = {
     confirmarSalida:    'Oui, se déconnecter',
     cerrarMenu:         'Fermer le menu',
     abrirPerfil:        'Ouvrir le menu de profil',
+    abrirMenu:          'Ouvrir le menu de navigation',
     profile: 'Mon Profil',
     cuenta: 'Compte',
     realidadAumentada: 'Réalité Augmentée'
@@ -122,6 +126,7 @@ export class Sidebar {
   readonly FolderOpenIcon: LucideIconData      = FolderOpen;
   readonly PlayIcon: LucideIconData            = Play;
   readonly BoxIcon: LucideIconData             = Box;
+  readonly MenuIcon: LucideIconData            = Menu;
   readonly AlertTriangle                       = TriangleAlert;
   readonly LogOut = LogOut;
   readonly User = User;
@@ -134,6 +139,9 @@ export class Sidebar {
   user              = this.authService.userSignal;
   toggleProfileMenu = signal(false);
 
+  /** Estado del sidebar en móvil (abierto/cerrado) */
+  sidebarOpen = signal(false);
+
   /** Idioma basado en preferencia de UI (con fallback al de la cuenta) */
   private idioma = computed<Idioma>(() => {
     const uiIdioma = this.prefs.idioma();
@@ -145,74 +153,98 @@ export class Sidebar {
   t = computed(() => I18N[this.idioma()]);
   a11yClass = computed(() => A11Y_CLASSES[this.prefs.perfil()]);
 
+  constructor() {
+    // Bloquea el scroll del body mientras el sidebar está abierto en móvil
+    effect(() => {
+      document.body.style.overflow = this.sidebarOpen() ? 'hidden' : '';
+    });
+  }
+
+  toggleSidebar() {
+    this.sidebarOpen.update(v => !v);
+  }
+
+  closeSidebar() {
+    this.sidebarOpen.set(false);
+  }
+
   onLogout() {
     this.authService.logOut();
   }
 
   @HostListener('window:keydown', ['$event'])
-handleKeyboardNavigation(event: KeyboardEvent) {
+  handleKeyboardNavigation(event: KeyboardEvent) {
 
-  // Modal abierto
-  if (this.toggleProfileMenu()) {
+    // Modal de logout abierto
+    if (this.toggleProfileMenu()) {
+
+      switch (event.code) {
+
+        case 'Enter':
+        case 'NumpadEnter':
+          event.preventDefault();
+          this.onLogout();
+          break;
+
+        case 'Escape':
+          event.preventDefault();
+          this.toggleProfileMenu.set(false);
+          break;
+      }
+
+      return;
+    }
+
+    // Sidebar abierto en móvil: Escape lo cierra
+    if (this.sidebarOpen()) {
+      if (event.code === 'Escape') {
+        event.preventDefault();
+        this.closeSidebar();
+      }
+      return;
+    }
+
+    // Atajos normales (requieren Shift)
+    if (!event.shiftKey) {
+      return;
+    }
 
     switch (event.code) {
 
-      case 'Enter':
-      case 'NumpadEnter':
+      case 'Digit1':
         event.preventDefault();
-        this.onLogout();
+        this.router.navigate(['/home/dashboard']);
+        break;
+
+      case 'Digit2':
+        event.preventDefault();
+        this.router.navigate(['/home/courses']);
+        break;
+
+      case 'Digit3':
+        event.preventDefault();
+        this.router.navigate(['/home/schedule']);
+        break;
+
+      case 'Digit4':
+        event.preventDefault();
+        this.router.navigate(['/home/projects']);
+        break;
+
+      case 'Digit5':
+        event.preventDefault();
+        this.router.navigate(['/home/profile']);
+        break;
+
+      case 'Digit6':
+        event.preventDefault();
+        this.router.navigate(['/home/ar-viewer']);
         break;
 
       case 'Escape':
         event.preventDefault();
-        this.toggleProfileMenu.set(false);
+        this.toggleProfileMenu.set(true);
         break;
     }
-
-    return;
   }
-
-  // Atajos normales (requieren Shift)
-  if (!event.shiftKey) {
-    return;
-  }
-
-  switch (event.code) {
-
-    case 'Digit1':
-      event.preventDefault();
-      this.router.navigate(['/home/dashboard']);
-      break;
-
-    case 'Digit2':
-      event.preventDefault();
-      this.router.navigate(['/home/courses']);
-      break;
-
-    case 'Digit3':
-      event.preventDefault();
-      this.router.navigate(['/home/schedule']);
-      break;
-
-    case 'Digit4':
-      event.preventDefault();
-      this.router.navigate(['/home/projects']);
-      break;
-
-    case 'Digit5':
-      event.preventDefault();
-      this.router.navigate(['/home/profile']);
-      break;
-
-    case 'Digit6':
-      event.preventDefault();
-      this.router.navigate(['/home/ar-viewer']);
-      break;
-
-    case 'Escape':
-      event.preventDefault();
-      this.toggleProfileMenu.set(true);
-      break;
-  }
-}
 }

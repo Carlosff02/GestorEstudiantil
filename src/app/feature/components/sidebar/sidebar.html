@@ -1,6 +1,21 @@
+<!-- Botón hamburguesa (solo visible en móvil, fixed en la esquina superior) -->
+@if (!sidebarOpen()) {
+  <button
+    (click)="toggleSidebar()"
+    class="md:hidden fixed top-4 left-4 z-40 w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-violet-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+    [attr.aria-label]="t()['abrirMenu']"
+    aria-controls="sidebar"
+    [attr.aria-expanded]="sidebarOpen()"
+  >
+    <lucide-angular [img]="MenuIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+  </button>
+}
+
 <aside
   id="sidebar"
-  [class]="'bg-slate-900 border-r border-slate-700 w-64 h-full flex flex-col fixed md:relative z-30 transition-transform duration-300 transform -translate-x-full md:translate-x-0 ' + a11yClass()"
+  [class]="'bg-slate-900 border-r border-slate-700 w-64 h-full flex flex-col fixed md:relative z-30 transition-transform duration-300 transform md:translate-x-0 '
+            + (sidebarOpen() ? 'translate-x-0' : '-translate-x-full') + ' '
+            + a11yClass()"
   [attr.lang]="user()?.idioma || 'es'"
   role="navigation"
   [attr.aria-label]="t()['appName']"
@@ -14,7 +29,7 @@
     </div>
     <button
       class="ml-auto md:hidden text-slate-400 hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded"
-      onclick="toggleSidebar()"
+      (click)="closeSidebar()"
       [attr.aria-label]="t()['cerrarMenu']"
     >
       <lucide-angular [img]="XIcon" class="w-5 h-5"></lucide-angular>
@@ -59,18 +74,21 @@
     </p>
 
     <a [routerLink]="'dashboard'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
       <lucide-angular [img]="LayoutDashboardIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
       {{ t()['dashboard'] }}
     </a>
 
     <a [routerLink]="'courses'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
       <lucide-angular [img]="BookOpenIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
       {{ t()['misCursos'] }}
     </a>
 
     <a [routerLink]="'schedule'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
       <lucide-angular [img]="CalendarIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
       {{ t()['horario'] }}
@@ -81,6 +99,7 @@
     </p>
 
     <a [routerLink]="'projects'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
       <lucide-angular [img]="BriefcaseIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
       {{ t()['misProyectos'] }}
@@ -91,12 +110,14 @@
     </p>
 
      <a [routerLink]="'profile'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+        (click)="closeSidebar()"
         class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
        <lucide-angular [img]="User" class="w-5 h-5" aria-hidden="true"></lucide-angular>
        {{ t()['profile'] }}
      </a>
 
      <a [routerLink]="'ar-viewer'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+        (click)="closeSidebar()"
         class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
        <lucide-angular [img]="BoxIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
        {{ t()['realidadAumentada'] }}
@@ -130,6 +151,14 @@
     </div>
   </div>
 </aside>
+
+@if (sidebarOpen()) {
+  <div
+    class="fixed inset-0 bg-black/50 z-20 md:hidden"
+    (click)="closeSidebar()"
+    aria-hidden="true"
+  ></div>
+}
 
 @if(toggleProfileMenu()) {
 <div
