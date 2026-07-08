@@ -49,86 +49,88 @@
       vr-mode-ui="enabled: false"
       style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;"
     >
-      <a-assets>
-        <!-- Modelo: Átomo -->
-        <a-asset-item id="atomo-model" src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/models/obj/lightning/lightning.obj"></a-asset-item>
-
-        <!-- Modelo: Corazón (usamos geometría primitiva) -->
-
-        <!-- Modelo: Sistema Solar (usamos múltiples esferas) -->
-      </a-assets>
-
       <a-marker preset="hiro">
+
         @if (selectedModel() === 'atomo') {
-        <!-- Átomo: núcleo + electrones orbitando -->
-        <a-entity position="0 0 0">
+        <!-- Átomo: núcleo + 3 electrones orbitando usando geometrías nativas -->
+        <a-entity position="0 0.15 0">
+          <!-- Núcleo -->
           <a-sphere radius="0.15" color="#8b5cf6" emissive="#6d28d9" emissive-intensity="0.5"></a-sphere>
           <!-- Órbita 1 -->
           <a-entity rotation="0 0 0">
-            <a-torus radius="0.4" radius-tubular="0.005" color="#a78bfa" opacity="0.5" transparent="true"></a-torus>
-            <a-sphere radius="0.06" color="#60a5fa" animation="property: position; to: 0.4 0 0; dur: 2000; easing: linear; loop: true"
+            <a-torus radius="0.4" radius-tubular="0.008" color="#a78bfa" opacity="0.4" transparent="true"></a-torus>
+            <a-sphere radius="0.06" color="#60a5fa"
+                      animation="property: position; to: 0.4 0 0; dur: 2000; easing: linear; loop: true"
                       position="0.4 0 0"></a-sphere>
           </a-entity>
           <!-- Órbita 2 -->
           <a-entity rotation="90 0 0">
-            <a-torus radius="0.6" radius-tubular="0.005" color="#a78bfa" opacity="0.5" transparent="true"></a-torus>
-            <a-sphere radius="0.05" color="#34d399" animation="property: position; to: 0.6 0 0; dur: 3000; easing: linear; loop: true"
+            <a-torus radius="0.6" radius-tubular="0.008" color="#a78bfa" opacity="0.4" transparent="true"></a-torus>
+            <a-sphere radius="0.05" color="#34d399"
+                      animation="property: position; to: 0.6 0 0; dur: 3000; easing: linear; loop: true"
                       position="0.6 0 0"></a-sphere>
           </a-entity>
           <!-- Órbita 3 -->
           <a-entity rotation="45 45 0">
-            <a-torus radius="0.8" radius-tubular="0.005" color="#a78bfa" opacity="0.5" transparent="true"></a-torus>
-            <a-sphere radius="0.04" color="#fbbf24" animation="property: position; to: 0.8 0 0; dur: 4000; easing: linear; loop: true"
+            <a-torus radius="0.8" radius-tubular="0.008" color="#a78bfa" opacity="0.4" transparent="true"></a-torus>
+            <a-sphere radius="0.04" color="#fbbf24"
+                      animation="property: position; to: 0.8 0 0; dur: 4000; easing: linear; loop: true"
                       position="0.8 0 0"></a-sphere>
           </a-entity>
         </a-entity>
         }
 
         @if (selectedModel() === 'corazon') {
-        <!-- Corazón 3D usando geometría torus knot -->
-        <a-entity position="0 0 0" animation="property: rotation; to: 0 360 0; dur: 8000; easing: linear; loop: true">
-          <a-torus-knot radius="0.3" radius-tubular="0.08" p="2" q="3" color="#e11d48" emissive="#be123c" emissive-intensity="0.3">
-          </a-torus-knot>
-          <a-torus-knot radius="0.25" radius-tubular="0.06" p="2" q="3" color="#fb7185" emissive="#e11d48" emissive-intensity="0.2"
-                        position="0 0 0.05">
-          </a-torus-knot>
-          <a-entity position="0 -0.3 0" scale="0.5 0.5 0.5">
-            <a-box depth="0.1" height="0.1" width="0.05" color="#e11d48" position="-0.1 -0.05 0"></a-box>
-            <a-box depth="0.1" height="0.1" width="0.05" color="#e11d48" position="0.1 -0.05 0"></a-box>
-          </a-entity>
+        <!-- Corazón 3D con geometrías nativas -->
+        <a-entity position="0 0.15 0" animation="property: rotation; to: 0 360 0; dur: 8000; easing: linear; loop: true">
+          <!-- Cuerpo principal del corazón (torus knot) -->
+          <a-torus-knot radius="0.3" radius-tubular="0.08" p="2" q="3" color="#e11d48" emissive="#be123c" emissive-intensity="0.3"></a-torus-knot>
+          <!-- Capa interior -->
+          <a-torus-knot radius="0.25" radius-tubular="0.06" p="2" q="3" color="#fb7185" emissive="#e11d48" emissive-intensity="0.2" position="0 0 0.05"></a-torus-knot>
+          <!-- Puntita inferior -->
+          <a-cone radius-bottom="0.08" radius-top="0.02" height="0.15" color="#e11d48" position="0 -0.35 0"></a-cone>
         </a-entity>
         }
 
         @if (selectedModel() === 'sistema-solar') {
         <!-- Sistema Solar -->
-        <a-entity position="0 0 0" animation="property: rotation; to: 0 360 0; dur: 60000; easing: linear; loop: true">
+        <a-entity position="0 0.15 0">
           <!-- Sol -->
           <a-sphere radius="0.15" color="#fbbf24" emissive="#f59e0b" emissive-intensity="0.8">
-            <a-animation attribute="scale" to="1.1 1.1 1.1" dur="2000" direction="alternate" loop="true"></a-animation>
+            <a-animation attribute="scale" to="1.15 1.15 1.15" dur="1500" direction="alternate" loop="true"></a-animation>
           </a-sphere>
           <!-- Mercurio -->
           <a-entity rotation="0 0 0">
-            <a-sphere radius="0.02" color="#9ca3af" position="0.25 0 0"
-                      animation="property: position; to: 0.25 0 0; dur: 3000; easing: linear; loop: true"></a-sphere>
+            <a-sphere radius="0.02" color="#9ca3af" position="0.25 0 0"></a-sphere>
+            <a-sphere radius="0.02" color="#9ca3af"
+                      animation="property: position; to: 0.25 0 0; dur: 3000; easing: linear; loop: true"
+                      position="0.25 0 0"></a-sphere>
           </a-entity>
           <!-- Venus -->
           <a-entity rotation="0 30 0">
-            <a-sphere radius="0.035" color="#f59e0b" position="0.35 0 0"
-                      animation="property: position; to: 0.35 0 0; dur: 5000; easing: linear; loop: true"></a-sphere>
+            <a-sphere radius="0.03" color="#f59e0b" position="0.35 0 0"></a-sphere>
+            <a-sphere radius="0.03" color="#f59e0b"
+                      animation="property: position; to: 0.35 0 0; dur: 5000; easing: linear; loop: true"
+                      position="0.35 0 0"></a-sphere>
           </a-entity>
-          <!-- Tierra -->
+          <!-- Tierra con órbita -->
           <a-entity rotation="0 60 0">
-            <a-sphere radius="0.04" color="#3b82f6" position="0.45 0 0"
-                      animation="property: position; to: 0.45 0 0; dur: 7000; easing: linear; loop: true"></a-sphere>
-            <a-torus radius="0.45" radius-tubular="0.003" color="#6366f1" opacity="0.3" transparent="true"></a-torus>
+            <a-torus radius="0.45" radius-tubular="0.005" color="#6366f1" opacity="0.3" transparent="true"></a-torus>
+            <a-sphere radius="0.04" color="#3b82f6" position="0.45 0 0"></a-sphere>
+            <a-sphere radius="0.04" color="#3b82f6"
+                      animation="property: position; to: 0.45 0 0; dur: 7000; easing: linear; loop: true"
+                      position="0.45 0 0"></a-sphere>
           </a-entity>
           <!-- Marte -->
           <a-entity rotation="0 90 0">
-            <a-sphere radius="0.03" color="#ef4444" position="0.55 0 0"
-                      animation="property: position; to: 0.55 0 0; dur: 10000; easing: linear; loop: true"></a-sphere>
+            <a-sphere radius="0.03" color="#ef4444" position="0.55 0 0"></a-sphere>
+            <a-sphere radius="0.03" color="#ef4444"
+                      animation="property: position; to: 0.55 0 0; dur: 10000; easing: linear; loop: true"
+                      position="0.55 0 0"></a-sphere>
           </a-entity>
         </a-entity>
         }
+
       </a-marker>
 
       <a-entity camera></a-entity>
@@ -166,11 +168,11 @@
       </summary>
       <div class="mt-3 flex flex-col items-center gap-2">
         <p class="text-xs text-slate-500">Imprime este marcador y muéstraselo a la cámara:</p>
-        <img src="https://raw.githack.com/AR-js-org/AR.js/master/data/hiro.png"
+        <img src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/hiro.png"
              alt="Marcador Hiro para Realidad Aumentada"
              class="w-40 h-40 border-2 border-slate-600 rounded-lg"
              loading="lazy">
-        <a href="https://raw.githack.com/AR-js-org/AR.js/master/data/hiro.png"
+        <a href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/hiro.png"
            target="_blank"
            class="text-xs text-violet-400 hover:text-violet-300 underline focus:outline-none focus:ring-2 focus:ring-violet-500 rounded p-1">
           {{ t()['descargarMarcador'] }}

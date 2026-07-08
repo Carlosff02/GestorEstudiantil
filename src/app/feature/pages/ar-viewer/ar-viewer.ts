@@ -82,61 +82,31 @@ export class ArViewer implements OnInit, OnDestroy {
   cameraStatus = signal<'loading' | 'ready' | 'error'>('loading');
   /** Modelo seleccionado */
   selectedModel = signal<'atomo' | 'corazon' | 'sistema-solar'>('atomo');
-  /** AR.js scripts cargados */
-  private scriptsLoaded = false;
 
   private readonly _idioma = computed<Idioma>(() => {
     const uiIdioma = this.prefs.idioma();
     return uiIdioma in I18N ? uiIdioma : 'es';
   });
 
-  /** Traducciones locales (tiene las claves de AR) */
+  /** Traducciones locales */
   t = computed(() => I18N[this._idioma()]);
 
   /** Clase de accesibilidad */
   a11yClass = this.prefs.a11yClass;
 
   ngOnInit(): void {
-    this.loadArScripts();
+    // Esperar a que el DOM renderice el a-scene y la cámara esté lista
+    // AR.js se encarga de iniciar la cámara automáticamente
+    setTimeout(() => {
+      this.cameraStatus.set('ready');
+    }, 2000);
   }
 
   ngOnDestroy(): void {
     this.cleanupArScene();
   }
 
-  private loadArScripts(): void {
-    if (this.scriptsLoaded) {
-      this.cameraStatus.set('ready');
-      return;
-    }
-
-    // Cargar A-Frame desde CDN
-    const aframeScript = document.createElement('script');
-    aframeScript.src = 'https://aframe.io/releases/1.6.0/aframe.min.js';
-    aframeScript.onload = () => {
-      // Cargar AR.js
-      const arjsScript = document.createElement('script');
-      arjsScript.src = 'https://raw.githack.com/AR-js-org/AR.js/3.4.2/aframe/build/aframe-ar.js';
-      arjsScript.onload = () => {
-        this.scriptsLoaded = true;
-        this.cameraStatus.set('ready');
-      };
-      arjsScript.onerror = () => {
-        this.cameraStatus.set('error');
-      };
-      document.body.appendChild(arjsScript);
-    };
-    aframeScript.onerror = () => {
-      this.cameraStatus.set('error');
-    };
-    document.body.appendChild(aframeScript);
-  }
-
   private cleanupArScene(): void {
-    // Remover scripts de AR si existen
-    const arScripts = document.querySelectorAll('script[src*="aframe"]');
-    arScripts.forEach(script => script.remove());
-
     // Remover el canvas de A-Frame si existe
     const canvas = document.querySelector('a-scene canvas');
     if (canvas) {
@@ -155,7 +125,7 @@ export class ArViewer implements OnInit, OnDestroy {
   retryCamera(): void {
     this.cameraStatus.set('loading');
     this.cleanupArScene();
-    this.scriptsLoaded = false;
-    this.loadArScripts();
+    // Forzar recarga de la página para reiniciar AR.js
+    window.location.reload();
   }
 }
