@@ -8,8 +8,8 @@ import {
   User,
 } from 'lucide-angular';
 import { AuthService } from '../../service/auth.service';
-import { CommonModule } from '@angular/common';
-import { PreferenciasService } from '../../../core/service/preferencias.service';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { PerfilAccesibilidad, PreferenciasService } from '../../../core/service/preferencias.service';
 
 type Idioma = 'es' | 'en' | 'pt' | 'fr';
 
@@ -92,6 +92,15 @@ const I18N: Record<Idioma, Record<string, string>> = {
   },
 };
 
+const A11Y_CLASSES: Record<PerfilAccesibilidad, string> = {
+  '': '',
+  protanopia: 'a11y-protanopia',
+  deuteranopia: 'a11y-deuteranopia',
+  tritanopia: 'a11y-tritanopia',
+  baja_vision: 'a11y-baja-vision',
+  ceguera: 'a11y-ceguera',
+};
+
 @Component({
   selector: 'app-sidebar',
   imports: [RouterModule, LucideAngularModule, CommonModule],
@@ -112,6 +121,8 @@ export class Sidebar {
   readonly LogOut = LogOut;
   readonly User = User;
 
+  protected readonly prefs = inject(PreferenciasService);
+
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly prefs = inject(PreferenciasService);
@@ -127,8 +138,8 @@ export class Sidebar {
     return cuentaIdioma && cuentaIdioma in I18N ? cuentaIdioma : 'es';
   });
 
-  t         = computed(() => I18N[this.idioma()]);
-  a11yClass = this.prefs.a11yClass;
+  t = computed(() => I18N[this.idioma()]);
+  a11yClass = computed(() => A11Y_CLASSES[this.prefs.perfil()]);
 
   onLogout() {
     this.authService.logOut();
@@ -194,5 +205,4 @@ handleKeyboardNavigation(event: KeyboardEvent) {
       this.toggleProfileMenu.set(true);
       break;
   }
-}
 }
