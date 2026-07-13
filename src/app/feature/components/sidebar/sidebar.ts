@@ -33,7 +33,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     abrirMenu:          'Abrir menú de navegación',
     profile: 'Mi Pefil',
     cuenta: 'Cuenta',
-    realidadAumentada: 'Realidad Aumentada'
+    realidadAumentada: 'Realidad Aumentada',
+    aulaAr: 'Aula AR'
   },
   en: {
     appName:            'StudySync',
@@ -54,7 +55,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     abrirMenu:          'Open navigation menu',
     profile: 'My Profile',
     cuenta: 'Account',
-    realidadAumentada: 'Augmented Reality'
+    realidadAumentada: 'Augmented Reality',
+    aulaAr: 'AR Classroom'
   },
   pt: {
     appName:            'StudySync',
@@ -75,7 +77,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     abrirMenu:          'Abrir menu de navegação',
     profile: 'Meu Perfil',
     cuenta: 'Conta',
-    realidadAumentada: 'Realidade Aumentada'
+    realidadAumentada: 'Realidade Aumentada',
+    aulaAr: 'Salle AR'
   },
   fr: {
     appName:            'StudySync',
@@ -96,7 +99,8 @@ const I18N: Record<Idioma, Record<string, string>> = {
     abrirMenu:          'Ouvrir le menu de navigation',
     profile: 'Mon Profil',
     cuenta: 'Compte',
-    realidadAumentada: 'Réalité Augmentée'
+    realidadAumentada: 'Réalité Augmentée',
+    aulaAr: 'Salle AR'
   },
 };
 
