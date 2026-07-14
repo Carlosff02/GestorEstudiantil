@@ -125,7 +125,7 @@ export class Home {
 
   private readonly authService = inject(AuthService);
   private readonly proyectoMiembroService = inject(ProyectoMiembroService);
-  protected readonly prefs = inject(PreferenciasService);
+  private readonly prefs = inject(PreferenciasService);
   private readonly toast = inject(ToastService);
 
   user = this.authService.userSignal;

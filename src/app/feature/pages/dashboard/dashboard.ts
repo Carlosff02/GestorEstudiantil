@@ -1,8 +1,6 @@
-import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, signal, ViewChild, effect } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 import {
   Check,
   FileText,
@@ -14,20 +12,10 @@ import {
   type LucideIconData,
   InfoIcon,
   ListIcon,
-  CalendarIcon,
-  TrendingUp,
-  Briefcase,
-  Target,
-  Star,
-  Zap,
-  BookOpen,
 } from 'lucide-angular';
 import { AuthService } from '../../service/auth.service';
 import { CoursesService } from '../../service/courses.service';
-import { ProyectoService } from '../../service/proyecto.service';
 import { PreferenciasService } from '../../../core/service/preferencias.service';
-import { TareaProyectoResponse } from '../../types/project.type';
-import { apiUrl } from '../../../environment/environmet';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -68,7 +56,7 @@ const I18N: Record<Idioma, Record<string, string>> = {
     conHorarios: 'Con horarios asignados',
     tiempoEstudio: 'Tiempo de Estudio',
     medidoCronometro: 'Medido con cronómetro',
-    clasesDelDia: 'Clases del día',
+    clasesDelDia: 'Clases del Día (Hoy)',
     verHorario: 'Ver horario completo',
     sinSesiones: 'No tienes sesiones programadas para hoy.',
     aulaPorAsignar: 'Aula por asignar',
@@ -77,37 +65,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
     meses: 'Enero,Febrero,Marzo,Abril,Mayo,Junio,Julio,Agosto,Septiembre,Octubre,Noviembre,Diciembre',
     sinFecha: 'Sin fecha',
     dias: 'DOM,LUN,MAR,MIE,JUE,VIE,SAB',
-    clasesHoy: 'Clases hoy',
-    proximoExamen: 'Próximo examen',
-    rachaEstudio: 'días',
-    promedioGeneral: 'Promedio Gral.',
-    creditos: 'Créditos',
-    ciclo: 'Ciclo',
-    tareasPendientes: 'Tareas pend.',
-    proyectosActivos: 'Proyectos',
-    asistencia: 'Asistencia',
-    productividadSemanal: 'Productividad Semanal',
-    metaDiaria: 'Meta: 4h/día',
-    horasEstudiadas: 'Estudiado',
-    rendimientoCurso: 'Rendimiento por Curso',
-    notaEstudiante: 'Tu nota',
-    promedioClase: 'Prom. clase',
-    progresoLogros: 'Progreso y Logros',
-    nivel: 'Nivel',
-    metasCumplidas: 'Metas',
-    insignias: 'Insignias',
-    bloqueado: 'Bloqueado',
-    desbloqueado: 'Desbloqueado',
-    nuevo: 'NUEVO',
-    aulaAr: 'Aula de Realidad Aumentada',
-    aulaArDesc: 'Explora el sistema solar, planetas 3D, la Vía Láctea y más. Una experiencia educativa inmersiva directamente en tu entorno real.',
-    sinCamara: '¡Sin cámara también funciona!',
-    iniciarAulaAr: 'Iniciar Aula AR',
-    verExperiencias: 'Ver experiencias',
-    preguntasEducativas: 'Preguntas educativas',
-    escribeRespuesta: 'Escribe tu respuesta',
-    enviarRespuestas: 'Enviar respuestas',
-    respuestasEnviadas: '¡Respuestas enviadas! Revisa tus respuestas con tu docente.',
   },
   en: {
     saludo: 'Welcome back',
@@ -128,37 +85,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
     meses: 'January,February,March,April,May,June,July,August,September,October,November,December',
     sinFecha: 'No date',
     dias: 'SUN,MON,TUE,WED,THU,FRI,SAT',
-    clasesHoy: 'Classes today',
-    proximoExamen: 'Next exam',
-    rachaEstudio: 'days',
-    promedioGeneral: 'Avg. Grade',
-    creditos: 'Credits',
-    ciclo: 'Term',
-    tareasPendientes: 'Pending tasks',
-    proyectosActivos: 'Projects',
-    asistencia: 'Attendance',
-    productividadSemanal: 'Weekly Productivity',
-    metaDiaria: 'Goal: 4h/day',
-    horasEstudiadas: 'Studied',
-    rendimientoCurso: 'Course Performance',
-    notaEstudiante: 'Your grade',
-    promedioClase: 'Class avg.',
-    progresoLogros: 'Progress & Achievements',
-    nivel: 'Level',
-    metasCumplidas: 'Goals',
-    insignias: 'Badges',
-    bloqueado: 'Locked',
-    desbloqueado: 'Unlocked',
-    nuevo: 'NEW',
-    aulaAr: 'AR Classroom',
-    aulaArDesc: 'Explore the solar system, 3D planets, the Milky Way and more. An immersive educational experience directly in your real environment.',
-    sinCamara: 'No camera needed!',
-    iniciarAulaAr: 'Start AR Class',
-    verExperiencias: 'View experiences',
-    preguntasEducativas: 'Educational questions',
-    escribeRespuesta: 'Write your answer',
-    enviarRespuestas: 'Submit answers',
-    respuestasEnviadas: 'Answers submitted! Check your answers with your teacher.',
   },
   pt: {
     saludo: 'Bem-vindo de volta',
@@ -172,44 +98,13 @@ const I18N: Record<Idioma, Record<string, string>> = {
     medidoCronometro: 'Medido com cronômetro',
     clasesDelDia: 'Aulas de Hoje',
     verHorario: 'Ver horário completo',
-    sinSesiones: 'Nenhuma sessão programada para hoje.',
+    sinSesiones: 'Nenhuma sess�o programada para hoje.',
     aulaPorAsignar: 'Sala a ser atribuída',
     verEnCursos: 'Ver em Meus Cursos',
     verTodosCursos: 'Ver todos os meus cursos',
     meses: 'Janeiro,Fevereiro,Março,Abril,Maio,Junho,Julho,Agosto,Setembro,Outubro,Novembro,Dezembro',
     sinFecha: 'Sem data',
     dias: 'DOM,SEG,TER,QUA,QUI,SEX,SAB',
-    clasesHoy: 'Aulas hoje',
-    proximoExamen: 'Próximo exame',
-    rachaEstudio: 'dias',
-    promedioGeneral: 'Média Geral',
-    creditos: 'Créditos',
-    ciclo: 'Período',
-    tareasPendientes: 'Tarefas pend.',
-    proyectosActivos: 'Projetos',
-    asistencia: 'Assiduidade',
-    productividadSemanal: 'Produtividade Semanal',
-    metaDiaria: 'Meta: 4h/dia',
-    horasEstudiadas: 'Estudado',
-    rendimientoCurso: 'Desempenho por Curso',
-    notaEstudiante: 'Sua nota',
-    promedioClase: 'Média turma',
-    progresoLogros: 'Progresso e Conquistas',
-    nivel: 'Nível',
-    metasCumplidas: 'Metas',
-    insignias: 'Insígnias',
-    bloqueado: 'Bloqueado',
-    desbloqueado: 'Desbloqueado',
-    nuevo: 'NOVO',
-    aulaAr: 'Aula de Realidade Aumentada',
-    aulaArDesc: 'Explore o sistema solar, planetas 3D, a Via Láctea e mais. Uma experiência educativa imersiva diretamente no seu ambiente real.',
-    sinCamara: 'Sem câmera também funciona!',
-    iniciarAulaAr: 'Iniciar Aula AR',
-    verExperiencias: 'Ver experiências',
-    preguntasEducativas: 'Perguntas educativas',
-    escribeRespuesta: 'Escreva sua resposta',
-    enviarRespuestas: 'Enviar respostas',
-    respuestasEnviadas: 'Respostas enviadas! Verifique suas respostas com seu professor.',
   },
   fr: {
     saludo: 'Bon retour',
@@ -230,37 +125,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
     meses: 'Janvier,Février,Mars,Avril,Mai,Juin,Juillet,Août,Septembre,Octobre,Novembre,Décembre',
     sinFecha: 'Sans date',
     dias: 'DIM,LUN,MAR,MER,JEU,VEN,SAM',
-    clasesHoy: 'Cours aujourd\'hui',
-    proximoExamen: 'Prochain examen',
-    rachaEstudio: 'jours',
-    promedioGeneral: 'Moy. Générale',
-    creditos: 'Crédits',
-    ciclo: 'Semestre',
-    tareasPendientes: 'Tâches en attente',
-    proyectosActivos: 'Projets',
-    asistencia: 'Assiduité',
-    productividadSemanal: 'Productivité Hebdo',
-    metaDiaria: 'Objectif : 4h/jour',
-    horasEstudiadas: 'Étudié',
-    rendimientoCurso: 'Rendement par Cours',
-    notaEstudiante: 'Votre note',
-    promedioClase: 'Moy. classe',
-    progresoLogros: 'Progrès et Réalisations',
-    nivel: 'Niveau',
-    metasCumplidas: 'Objectifs',
-    insignias: 'Badges',
-    bloqueado: 'Verrouillé',
-    desbloqueado: 'Déverrouillé',
-    nuevo: 'NOUVEAU',
-    aulaAr: 'Classe de Réalité Augmentée',
-    aulaArDesc: 'Explorez le système solaire, les planètes 3D, la Voie lactée et plus encore. Une expérience éducative immersive directement dans votre environnement réel.',
-    sinCamara: 'Fonctionne sans caméra !',
-    iniciarAulaAr: 'Lancer la classe AR',
-    verExperiencias: 'Voir les expériences',
-    preguntasEducativas: 'Questions éducatives',
-    escribeRespuesta: 'Écrivez votre réponse',
-    enviarRespuestas: 'Envoyer les réponses',
-    respuestasEnviadas: 'Réponses envoyées ! Vérifiez vos réponses avec votre enseignant.',
   },
 };
 
@@ -273,12 +137,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements AfterViewInit, OnDestroy {
-  today = computed(() => new Date());
-
-  private usageData = signal<Record<string, number>>(this.loadUsageData());
-  private isTracking = false;
-  private accumulatedSeconds = 0;
-  private trackingInterval: ReturnType<typeof setInterval> | null = null;
   readonly CheckIcon: LucideIconData = Check;
   readonly FileTextIcon: LucideIconData = FileText;
   readonly LibraryIcon: LucideIconData = Library;
@@ -287,175 +145,11 @@ export class Dashboard implements AfterViewInit, OnDestroy {
   readonly HistoryIcon: LucideIconData = History;
   readonly InfoIcon = InfoIcon;
   readonly ListIcon = ListIcon;
-  readonly CalendarIcon: LucideIconData = CalendarIcon;
-  readonly TrendingUpIcon: LucideIconData = TrendingUp;
-  readonly BriefcaseIcon: LucideIconData = Briefcase;
-  readonly TargetIcon: LucideIconData = Target;
-  readonly StarIcon: LucideIconData = Star;
-  readonly ZapIcon: LucideIconData = Zap;
-  readonly BookOpenIcon: LucideIconData = BookOpen;
-
-  // ─── Métricas ──────────────────────────────────────────────────────────
-
-  metrics = computed(() => {
-    const c = this.courses.value();
-    const p = this.proyectos.value();
-    const allTasks = this.allTareas();
-    const totalCreditos = c?.reduce((sum, cr) => sum + (cr.creditos ?? 0), 0) ?? 0;
-    const proyectosActivos = p?.filter(pr => pr.estado !== 'completado' && pr.estado !== 'cancelado').length ?? 0;
-    const totalSesiones = c?.reduce((sum, cr) => sum + (cr.sesiones?.length ?? 0), 0) ?? 0;
-    return {
-      promedioGeneral: 0,
-      totalCreditos,
-      ciclo: '4to',
-      tareasPendientes: allTasks.filter(t => t.estado !== 'completado').length,
-      proyectosActivos,
-      asistencia: totalSesiones,
-    };
-  });
-
-  productividad = computed(() => {
-    const data = this.usageData();
-    const unit = this.productividadUnit();
-    const days: { dia: string; valor: number }[] = [];
-    const labels = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-      const mins = data[key] ?? 0;
-      const valor = unit === 'hours' ? Math.round((mins / 60) * 10) / 10 : Math.round(mins);
-      days.push({ dia: labels[date.getDay()], valor });
-    }
-    return days;
-  });
-
-  productividadUnit = signal<'hours' | 'minutes'>('hours');
-
-  toggleProductividadUnit(): void {
-    this.productividadUnit.update(u => u === 'hours' ? 'minutes' : 'hours');
-  }
-
-  cursosRendimiento = computed(() => {
-    const cursos = this.courses.value() ?? [];
-    const notasMock: Record<string, number> = {
-      'CALCULO': 15, 'FISICA': 17, 'PROGRAMACION': 18, 'BASE DE DATOS': 16,
-      'INGLES': 19, 'ESTRUCTURAS': 14, 'ALGEBRA': 13, 'QUIMICA': 15,
-    };
-    const promediosMock: Record<string, number> = {
-      'CALCULO': 14, 'FISICA': 15, 'PROGRAMACION': 16, 'BASE DE DATOS': 14,
-      'INGLES': 15, 'ESTRUCTURAS': 13, 'ALGEBRA': 12, 'QUIMICA': 13,
-    };
-    return cursos.map(c => {
-      const key = Object.keys(notasMock).find(k => c.nombre.toUpperCase().includes(k));
-      return {
-        curso: c.nombre,
-        creditos: c.creditos ?? 0,
-        nota: key ? notasMock[key] : 15,
-        promedioClase: key ? promediosMock[key] : 14,
-      };
-    });
-  });
-
-  rendimientoBars = computed(() => {
-    const items = this.cursosRendimiento();
-    const minScore = 60;
-    const maxScore = 100;
-    const svgW = 700;
-    const padL = 165;
-    const padR = 20;
-    const padT = 10;
-    const padB = 28;
-    const chartW = svgW - padL - padR;
-    const rowH = 36;
-    const totalH = padT + padB + items.length * rowH;
-    return {
-      svgW, totalH, padL, padR, padT, padB, chartW, minScore, maxScore,
-      ticks: [60, 70, 80, 90, 100],
-      items: items.map((c, i) => {
-        const notaPct = Math.round((c.nota / 20) * 100);
-        const promPct = Math.round((c.promedioClase / 20) * 100);
-        const y = padT + i * rowH + rowH / 2;
-        return {
-          curso: c.curso,
-          nota: c.nota,
-          notaPct,
-          promedioClase: c.promedioClase,
-          promPct,
-          y,
-          notaW: Math.max(((notaPct - minScore) / (maxScore - minScore)) * chartW, 0),
-          promW: Math.max(((promPct - minScore) / (maxScore - minScore)) * chartW, 0),
-        };
-      }),
-    };
-  });
-
-  eventosHoy = computed(() => {
-    const sesiones = this.getTodaySessions();
-    if (sesiones && sesiones.length > 0) {
-      return sesiones.map(s => ({
-        hora: this.formatTime(s.sesion.horaInicio) + ' - ' + this.formatTime(s.sesion.horaFin),
-        titulo: s.course.nombre + (s.sesion.nombre ? ': ' + s.sesion.nombre : ''),
-        tipo: 'clase' as const,
-        color: s.course.color || '#6366f1',
-      }));
-    }
-    const next = this.getNextSessions(4);
-    if (next.length > 0) {
-      return next.map(s => ({
-        hora: this.formatTime(s.sesion.horaInicio) + ' - ' + this.formatTime(s.sesion.horaFin),
-        titulo: s.course.nombre + (s.sesion.nombre ? ': ' + s.sesion.nombre : ''),
-        tipo: 'clase' as const,
-        color: s.course.color || '#6366f1',
-      }));
-    }
-    return [];
-  });
-
-  nextSession = computed(() => {
-    const next = this.getNextSessions(1);
-    return next.length > 0 ? next[0] : null;
-  });
-
-  chartPoints = computed(() => {
-    const datos = this.productividad();
-    const rawMax = Math.max(...datos.map(d => d.valor), 0);
-    const unit = this.productividadUnit();
-    const step = unit === 'hours' ? 1 : 30;
-    const maxM = Math.max(Math.ceil(rawMax / step) * step, unit === 'hours' ? 2 : 60);
-    const w = 700; const padL = 38; const padR = 20; const padB = 28; const padT = 10;
-    const chartW = w - padL - padR; const chartH = 180 - padT - padB;
-    const gridSteps = 4;
-    return {
-      maxM, step, gridSteps, unit,
-      points: datos.map((d, i) => {
-        const x = padL + (i / (datos.length - 1)) * chartW;
-        const y = padT + chartH - (d.valor / maxM) * chartH;
-        return { x, y, h: d.valor, l: d.dia };
-      }),
-    };
-  });
-
-  progreso = computed(() => ({
-    nivel: 8,
-    xpActual: 720,
-    xpMax: 1000,
-    racha: 5,
-    metasCumplidas: 12,
-    insignias: [
-      { nombre: 'Primer inicio', icono: 'estrella', desbloqueada: true },
-      { nombre: 'Racha 7 días', icono: 'fuego', desbloqueada: true },
-      { nombre: 'Apuntes pro', icono: 'libro', desbloqueada: true },
-      { nombre: 'Matemáticas', icono: 'calculadora', desbloqueada: false },
-      { nombre: 'Investigador', icono: 'lupa', desbloqueada: false },
-    ],
-  }));
 
   private readonly courseService = inject(CoursesService);
   private readonly authService = inject(AuthService);
   private readonly prefs = inject(PreferenciasService);
   private readonly route = inject(ActivatedRoute);
-  private readonly proyectoService = inject(ProyectoService);
 
   user = this.authService.userSignal;
 
@@ -465,28 +159,6 @@ export class Dashboard implements AfterViewInit, OnDestroy {
   });
 
   courses = this.courseService.obtenerCursosPorUsuario(this.userIdComputed);
-
-  proyectos = this.proyectoService.obtenerPorUsuarioId(this.userIdComputed);
-
-  private httpClient = inject(HttpClient);
-
-  private allTareas = signal<TareaProyectoResponse[]>([]);
-
-  constructor() {
-    effect(() => {
-      const projs = this.proyectos.value();
-      if (!projs || projs.length === 0) {
-        this.allTareas.set([]);
-        return;
-      }
-      Promise.all(
-        projs.map(p =>
-          firstValueFrom(this.httpClient.get<TareaProyectoResponse[]>(`${apiUrl}/tareas/${p.idProyecto}`))
-        )
-      ).then(results => this.allTareas.set(results.flat()));
-    });
-    this.startTimeTracking();
-  }
 
   private idioma = computed<Idioma>(() => {
     const uiIdioma = this.prefs.idioma();
@@ -729,7 +401,6 @@ export class Dashboard implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stopTimeTracking();
     this.stopCamera();
   }
 
@@ -750,33 +421,11 @@ export class Dashboard implements AfterViewInit, OnDestroy {
     );
   }
 
-  getNextSessions(limit = 3) {
-    const now = new Date();
-    const allUpcoming = this.courses?.value()?.flatMap((course) =>
-      course.sesiones
-        .filter((sesion) => {
-          if (!sesion.horaInicio) return false;
-          return new Date(sesion.horaInicio) > now;
-        })
-        .map((sesion) => ({ course, sesion }))
-    );
-    if (!allUpcoming) return [];
-    return allUpcoming
-      .sort((a, b) => new Date(a.sesion.horaInicio).getTime() - new Date(b.sesion.horaInicio).getTime())
-      .slice(0, limit);
-  }
-
   formatDate(dateString: string): string {
     if (!dateString) return this.t()['sinFecha'];
     const date = new Date(dateString);
     const months = this.t()['meses'].split(',');
     return `${date.getDate()} de ${months[date.getMonth()]}`;
-  }
-
-  formatDateFull(date: Date): string {
-    const months = this.t()['meses'].split(',');
-    const days = this.t()['dias'].split(',');
-    return `${days[date.getDay()]}, ${date.getDate()} de ${months[date.getMonth()]} ${date.getFullYear()}`;
   }
 
   formatTime(dateString: string): string {
@@ -790,70 +439,6 @@ export class Dashboard implements AfterViewInit, OnDestroy {
     const days = this.t()['dias'].split(',');
     return days[new Date(dateString).getDay()];
   }
-
-  // ─── Time tracking ────────────────────────────────────────────
-
-  private loadUsageData(): Record<string, number> {
-    try {
-      const raw = localStorage.getItem('usage_data');
-      return raw ? JSON.parse(raw) : {};
-    } catch { return {}; }
-  }
-
-  private saveUsageData(data: Record<string, number>): void {
-    try { localStorage.setItem('usage_data', JSON.stringify(data)); } catch {}
-  }
-
-  private getTodayKey(): string {
-    const d = new Date();
-    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
-  }
-
-  private flushTime(): void {
-    if (this.accumulatedSeconds === 0) return;
-    const data = this.loadUsageData();
-    const key = this.getTodayKey();
-    data[key] = (data[key] ?? 0) + this.accumulatedSeconds / 60;
-    this.accumulatedSeconds = 0;
-    this.saveUsageData(data);
-    this.usageData.set(this.loadUsageData());
-  }
-
-  private startTimeTracking(): void {
-    if (this.isTracking) return;
-    this.isTracking = true;
-    this.trackingInterval = setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        this.accumulatedSeconds += 30;
-        this.flushTime();
-      }
-    }, 30000);
-    document.addEventListener('visibilitychange', this.onVisibilityChange);
-    window.addEventListener('beforeunload', this.onBeforeUnload);
-  }
-
-  private stopTimeTracking(): void {
-    this.isTracking = false;
-    if (this.trackingInterval) {
-      clearInterval(this.trackingInterval);
-      this.trackingInterval = null;
-    }
-    this.flushTime();
-    document.removeEventListener('visibilitychange', this.onVisibilityChange);
-    window.removeEventListener('beforeunload', this.onBeforeUnload);
-  }
-
-  private onVisibilityChange = (): void => {
-    if (document.visibilityState === 'visible') {
-      this.startTimeTracking();
-    } else {
-      this.flushTime();
-    }
-  };
-
-  private onBeforeUnload = (): void => {
-    this.flushTime();
-  };
 
   openArPanel(): void {
     this.arPanelOpen = true;

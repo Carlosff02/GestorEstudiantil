@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 
 /**
  * Tipos para idioma y perfil de accesibilidad
@@ -20,7 +20,6 @@ const PREFERENCIAS_KEY = 'preferencias-ui';
 export interface PreferenciasUI {
   idioma: IdiomaUI;
   perfilAccesibilidad: PerfilAccesibilidad;
-  cursorGrande: boolean;
 }
 
 /**
@@ -58,7 +57,6 @@ export interface UiStrings {
   a11yTritanopia: string;
   a11yBajaVision: string;
   a11yCeguera: string;
-  a11yCursorGrande: string;
 
   // ── Sidebar de accesibilidad ──────────────────────────────────────
   btnA11y: string;
@@ -118,7 +116,6 @@ export const UI_TRANSLATIONS: Record<IdiomaUI, UiStrings> = {
     a11yTritanopia: 'Daltonismo (Tritanopia)',
     a11yBajaVision: 'Baja visión',
     a11yCeguera: 'Ceguera',
-    a11yCursorGrande: 'Cursor grande',
 
     // Sidebar
     btnA11y: 'Accesibilidad',
@@ -176,7 +173,6 @@ export const UI_TRANSLATIONS: Record<IdiomaUI, UiStrings> = {
     a11yTritanopia: 'Color blindness (Tritanopia)',
     a11yBajaVision: 'Low vision',
     a11yCeguera: 'Blindness',
-    a11yCursorGrande: 'Large cursor',
 
     // Sidebar
     btnA11y: 'Accessibility',
@@ -234,7 +230,6 @@ export const UI_TRANSLATIONS: Record<IdiomaUI, UiStrings> = {
     a11yTritanopia: 'Daltonismo (Tritanopia)',
     a11yBajaVision: 'Baixa visão',
     a11yCeguera: 'Cegueira',
-    a11yCursorGrande: 'Cursor grande',
 
     // Sidebar
     btnA11y: 'Acessibilidade',
@@ -292,7 +287,6 @@ export const UI_TRANSLATIONS: Record<IdiomaUI, UiStrings> = {
     a11yTritanopia: 'Daltonisme (Tritanopie)',
     a11yBajaVision: 'Basse vision',
     a11yCeguera: 'Cécité',
-    a11yCursorGrande: 'Grand curseur',
 
     // Sidebar
     btnA11y: 'Accessibilité',
@@ -347,7 +341,6 @@ export class PreferenciasService {
   /** Preferencias actuales */
   private _idioma = signal<IdiomaUI>(this.loadFromStorage().idioma);
   private _perfil = signal<PerfilAccesibilidad>(this.loadFromStorage().perfilAccesibilidad);
-  private _cursorGrande = signal<boolean>(this.loadFromStorage().cursorGrande);
 
   /** Sidebar abierto/cerrado */
   sidebarAbierto = signal(false);
@@ -355,7 +348,6 @@ export class PreferenciasService {
   /** Señales públicas de solo lectura */
   readonly idioma = this._idioma.asReadonly();
   readonly perfil = this._perfil.asReadonly();
-  readonly cursorGrande = this._cursorGrande.asReadonly();
 
   /** Texto de la interfaz según idioma actual */
   readonly t = computed(() => UI_TRANSLATIONS[this._idioma()]);
@@ -376,16 +368,6 @@ export class PreferenciasService {
     const saved = this.loadFromStorage();
     this._idioma.set(saved.idioma);
     this._perfil.set(saved.perfilAccesibilidad);
-    this._cursorGrande.set(saved.cursorGrande);
-
-    // Aplica/remueve la clase .a11y-cursor-grande en <html>
-    effect(() => {
-      if (this._cursorGrande()) {
-        document.documentElement.classList.add('a11y-cursor-grande');
-      } else {
-        document.documentElement.classList.remove('a11y-cursor-grande');
-      }
-    });
   }
 
   /** Cambia el idioma de la interfaz */
@@ -432,18 +414,10 @@ export class PreferenciasService {
     }
   }
 
-  /** Alterna el cursor grande */
-  toggleCursorGrande(): void {
-    this._cursorGrande.update(val => !val);
-    this.guardarEnStorage();
-    this.announce.set(`${this.t().a11yCursorGrande}: ${this._cursorGrande() ? 'activado' : 'desactivado'}`);
-  }
-
   /** Restablece las preferencias a valores por defecto */
   restablecer(): void {
     this._idioma.set('es');
     this._perfil.set('');
-    this._cursorGrande.set(false);
     this.guardarEnStorage();
     this.announce.set('Preferencias restablecidas');
   }
@@ -461,13 +435,12 @@ export class PreferenciasService {
           perfilAccesibilidad: (parsed.perfilAccesibilidad && this.isPerfilValido(parsed.perfilAccesibilidad))
             ? parsed.perfilAccesibilidad
             : '',
-          cursorGrande: typeof parsed.cursorGrande === 'boolean' ? parsed.cursorGrande : false,
         };
       }
     } catch {
       // Si falla el parseo, usar defaults
     }
-    return { idioma: 'es', perfilAccesibilidad: '', cursorGrande: false };
+    return { idioma: 'es', perfilAccesibilidad: '' };
   }
 
   /** Guarda preferencias en localStorage */
@@ -475,7 +448,6 @@ export class PreferenciasService {
     localStorage.setItem(PREFERENCIAS_KEY, JSON.stringify({
       idioma: this._idioma(),
       perfilAccesibilidad: this._perfil(),
-      cursorGrande: this._cursorGrande(),
     }));
   }
 
