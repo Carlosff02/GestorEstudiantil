@@ -1,3 +1,11 @@
+<!-- Botón flotante de accesibilidad -->
+<button (click)="prefs.toggleSidebar()"
+        class="a11y-fab"
+        [attr.aria-label]="prefs.t().btnA11y"
+        title="{{ prefs.t().btnA11y }}">
+  <lucide-angular [img]="AccessibilityIcon" class="a11y-fab__icon"></lucide-angular>
+</button>
+
 <!-- Sidebar lateral de accesibilidad -->
 @if (prefs.sidebarAbierto()) {
   <aside

@@ -92,12 +92,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
     rendimientoCurso: 'Rendimiento por Curso',
     notaEstudiante: 'Tu nota',
     promedioClase: 'Prom. clase',
-    asistenteIA: 'Asistente IA',
-    resumirApuntes: 'Resumir apuntes',
-    generarPreguntas: 'Generar preguntas',
-    crearFlashcards: 'Crear flashcards',
-    recomendarEstudio: 'Recomendar estudio',
-    preguntaIA: 'Pregunta algo a la IA...',
     progresoLogros: 'Progreso y Logros',
     nivel: 'Nivel',
     metasCumplidas: 'Metas',
@@ -149,12 +143,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
     rendimientoCurso: 'Course Performance',
     notaEstudiante: 'Your grade',
     promedioClase: 'Class avg.',
-    asistenteIA: 'AI Assistant',
-    resumirApuntes: 'Summarize notes',
-    generarPreguntas: 'Generate questions',
-    crearFlashcards: 'Create flashcards',
-    recomendarEstudio: 'Recommend study',
-    preguntaIA: 'Ask the AI something...',
     progresoLogros: 'Progress & Achievements',
     nivel: 'Level',
     metasCumplidas: 'Goals',
@@ -206,12 +194,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
     rendimientoCurso: 'Desempenho por Curso',
     notaEstudiante: 'Sua nota',
     promedioClase: 'Média turma',
-    asistenteIA: 'Assistente IA',
-    resumirApuntes: 'Resumir anotações',
-    generarPreguntas: 'Gerar perguntas',
-    crearFlashcards: 'Criar flashcards',
-    recomendarEstudio: 'Recomendar estudo',
-    preguntaIA: 'Pergunte algo à IA...',
     progresoLogros: 'Progresso e Conquistas',
     nivel: 'Nível',
     metasCumplidas: 'Metas',
@@ -263,12 +245,6 @@ const I18N: Record<Idioma, Record<string, string>> = {
     rendimientoCurso: 'Rendement par Cours',
     notaEstudiante: 'Votre note',
     promedioClase: 'Moy. classe',
-    asistenteIA: 'Assistant IA',
-    resumirApuntes: 'Résumer les notes',
-    generarPreguntas: 'Générer des questions',
-    crearFlashcards: 'Créer des flashcards',
-    recomendarEstudio: 'Recommander étude',
-    preguntaIA: 'Demandez quelque chose à l\'IA...',
     progresoLogros: 'Progrès et Réalisations',
     nivel: 'Niveau',
     metasCumplidas: 'Objectifs',
@@ -878,56 +854,6 @@ export class Dashboard implements AfterViewInit, OnDestroy {
   private onBeforeUnload = (): void => {
     this.flushTime();
   };
-
-  // ─── Asistente IA ──────────────────────────────────────────────
-
-  chatMessages = signal<{ role: 'user' | 'assistant'; text: string }[]>([]);
-  chatInput = '';
-
-  sendMessage(): void {
-    const text = this.chatInput.trim();
-    if (!text) return;
-    this.chatMessages.update(m => [...m, { role: 'user', text }]);
-    this.chatInput = '';
-    setTimeout(() => {
-      const response = this.generateAIResponse(text);
-      this.chatMessages.update(m => [...m, { role: 'assistant', text: response }]);
-    }, 400);
-  }
-
-  private generateAIResponse(input: string): string {
-    const lower = input.toLowerCase();
-    if (lower.includes('hola') || lower.includes('buenos') || lower.includes('hey')) return '¡Hola! ¿En qué puedo ayudarte con tus estudios hoy?';
-    if (lower.includes('curso') || lower.includes('materia') || lower.includes('clase')) {
-      const cursos = this.courses.value();
-      if (cursos && cursos.length > 0) return `Tienes ${cursos.length} cursos inscritos: ${cursos.map(c => c.nombre).join(', ')}.`;
-      return 'Aún no tienes cursos registrados.';
-    }
-    if (lower.includes('tarea') || lower.includes('tareas') || lower.includes('pendiente')) {
-      return `Tienes ${this.allTareas().filter(t => t.estado !== 'completado').length} tareas pendientes en total.`;
-    }
-    if (lower.includes('proyecto') || lower.includes('proyectos')) {
-      const proyectos = this.proyectos.value();
-      if (proyectos && proyectos.length > 0) return `Tienes ${proyectos.filter(p => p.estado !== 'completado').length} proyectos activos.`;
-      return 'No tienes proyectos registrados.';
-    }
-    if (lower.includes('próxima') || lower.includes('proxima') || lower.includes('siguiente') || lower.includes('sesión') || lower.includes('sesion')) {
-      const next = this.getNextSessions(1);
-      if (next.length > 0) return `Tu próxima sesión es: ${next[0].course.nombre} — ${this.formatDate(next[0].sesion.horaInicio)} a las ${this.formatTime(next[0].sesion.horaInicio)}.`;
-      return 'No tienes sesiones próximas registradas.';
-    }
-    if (lower.includes('hoy')) {
-      const hoy = this.getTodaySessions();
-      if (hoy && hoy.length > 0) return `Hoy tienes ${hoy.length} sesión(es): ${hoy.map(s => s.course.nombre).join(', ')}.`;
-      return 'Hoy no tienes sesiones agendadas. ¡Aprovecha para estudiar!';
-    }
-    return 'Entendido. Puedo ayudarte con info sobre tus cursos, tareas, proyectos, sesiones y más. ¿Qué deseas saber?';
-  }
-
-  askQuickAction(text: string): void {
-    this.chatInput = text;
-    this.sendMessage();
-  }
 
   openArPanel(): void {
     this.arPanelOpen = true;
