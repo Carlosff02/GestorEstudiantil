@@ -27,6 +27,13 @@
       </div>
 
       <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Accessibility -->
+        <button (click)="prefs.toggleSidebar()"
+                class="a11y-trigger w-9 h-9 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-colors"
+                [attr.aria-label]="prefs.t().btnA11y"
+                title="{{ prefs.t().btnA11y }}">
+          <lucide-angular [img]="Accessibility" class="w-5 h-5"></lucide-angular>
+        </button>
         <!-- Search -->
          <button (click)="notificationModalOpen.set(true)" class="w-9 h-9 rounded-full hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-colors relative" title="Ver Notificaciones">
           <lucide-angular [img]="Bell" class="w-5 h-5"></lucide-angular>

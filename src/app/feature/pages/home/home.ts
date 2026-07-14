@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
-import { Bell, LucideAngularModule, X } from 'lucide-angular';
+import { Bell, Accessibility, LucideAngularModule, X } from 'lucide-angular';
 import { ProyectoMiembroService } from '../../service/proyecto-miembro.service';
 import { PreferenciasService } from '../../../core/service/preferencias.service';
 import { ToastService } from '../../../shared/toast/toast.service';
@@ -121,11 +121,12 @@ const I18N: Record<Idioma, Record<string, string>> = {
 })
 export class Home {
   readonly Bell = Bell;
+  readonly Accessibility = Accessibility;
   readonly X = X;
 
   private readonly authService = inject(AuthService);
   private readonly proyectoMiembroService = inject(ProyectoMiembroService);
-  private readonly prefs = inject(PreferenciasService);
+  protected readonly prefs = inject(PreferenciasService);
   private readonly toast = inject(ToastService);
 
   user = this.authService.userSignal;

@@ -1,0 +1,3 @@
+/* Statistics page — chart-specific overrides */
+
+/* Inline bar sparklines use flex-end alignment implicitly via items-end */

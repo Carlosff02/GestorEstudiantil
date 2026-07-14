@@ -3,6 +3,32 @@
 @import "tailwindcss";
  body { font-family: 'Inter', sans-serif; }
 
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR DESIGN SYSTEM — global CSS variables
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --sb-bg:            #1a1a2e;
+  --sb-surface:       #1f1f38;
+  --sb-border:        #2d2d4a;
+  --sb-border-light:  #3d3d5a;
+  --sb-text:          #9898b8;
+  --sb-text-light:    #c4c2e0;
+  --sb-text-bright:   #e2e0f0;
+  --sb-accent:        #a78bfa;
+  --sb-accent-bg:     rgba(167,139,250,.12);
+  --sb-accent-border: rgba(167,139,250,.18);
+  --sb-hover-bg:      rgba(255,255,255,.04);
+  --sb-avatar-bg:     linear-gradient(135deg, #7c3aed, #a78bfa);
+  --sb-pomo-bg:       #1f1f38;
+  --sb-pomo-border:   #2d2d4a;
+  --sb-pomo-btn:      #7c3aed;
+  --sb-pomo-btn-hover:#6d28d9;
+  --sb-overlay:       rgba(5,5,18,.75);
+  --sb-modal-bg:      #1f1f38;
+  --sb-modal-border:  #2d2d4a;
+  --sb-modal-body-bg: #15152a;
+}
+
         /* Custom Scrollbars */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -86,6 +112,12 @@
 .a11y-baja-vision .h-5  { height: 1.6rem !important; }
 .a11y-baja-vision .text-slate-400 { color: #475569 !important; }
 .a11y-baja-vision .text-slate-500 { color: #334155 !important; }
+
+/* ── Cursor grande ────────────────────────────────────────── */
+.a11y-cursor-grande,
+.a11y-cursor-grande * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='44' viewBox='0 0 36 44'%3E%3Cpolygon points='2,2 2,30 10,22 18,38 24,34 16,18 28,18' fill='white' stroke='%231e293b' stroke-width='2.5' stroke-linejoin='round'/%3E%3Cpolygon points='4,4 4,27 11,20 19,36 22,34 15,18 27,18' fill='white' stroke='none'/%3E%3C/svg%3E") 4 4, auto !important;
+}
 
 /* ── Ceguera ─────────────────────────────────────────────────────────────── */
 .a11y-ceguera img,
@@ -193,9 +225,9 @@ button, a, [role="button"], input, select, textarea {
   min-height: 44px;
   min-width: 44px;
 }
-button:where(.w-6, .w-7, .w-8, .h-6, .h-7, .h-8),
+button:where(.w-6, .w-7, .w-8, .h-6, .h-7, .h-8, .a11y-toggle),
 a:where(.w-6, .w-7, .w-8, .h-6, .h-7, .h-8),
-[role="button"]:where(.w-6, .w-7, .w-8, .h-6, .h-7, .h-8) {
+[role="button"]:where(.w-6, .w-7, .w-8, .h-6, .h-7, .h-8, .a11y-toggle) {
   min-height: unset;
   min-width: unset;
 }

@@ -1,16 +1,3 @@
-<!-- Botón flotante de accesibilidad -->
-<button
-  class="a11y-fab"
-  [class]="prefs.a11yClass()"
-  (click)="toggle()"
-  [attr.aria-expanded]="prefs.sidebarAbierto()"
-  aria-controls="a11y-panel"
-  [attr.aria-label]="prefs.t().btnA11y"
-  title="{{ prefs.t().btnA11y }}"
->
-  <lucide-angular [img]="AccessibilityIcon" class="a11y-fab__icon"></lucide-angular>
-</button>
-
 <!-- Sidebar lateral de accesibilidad -->
 @if (prefs.sidebarAbierto()) {
   <aside
@@ -74,6 +61,22 @@
             <option [value]="item.value">{{ prefs.t()[item.labelKey] }}</option>
           }
         </select>
+      </div>
+
+      <!-- Toggle Cursor Grande -->
+      <div class="a11y-field a11y-field--toggle">
+        <label class="a11y-field__label" for="a11y-cursor">
+          <span class="a11y-field__label-text">{{ prefs.t().a11yCursorGrande }}</span>
+        </label>
+        <button
+          class="a11y-toggle"
+          id="a11y-cursor"
+          role="switch"
+          [attr.aria-checked]="prefs.cursorGrande()"
+          (click)="toggleCursorGrande()"
+        >
+          <span class="a11y-toggle__slider"></span>
+        </button>
       </div>
 
       <!-- Botón restablecer -->
