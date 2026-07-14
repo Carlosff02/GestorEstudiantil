@@ -1,8 +1,8 @@
-<!-- Hamburger (mobile only) -->
+<!-- Botón hamburguesa (solo visible en móvil, fixed en la esquina superior) -->
 @if (!sidebarOpen()) {
   <button
     (click)="toggleSidebar()"
-    class="sb-hamburger"
+    class="md:hidden fixed top-4 left-4 z-40 w-10 h-10 flex items-center justify-center bg-slate-900 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-violet-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
     [attr.aria-label]="t()['abrirMenu']"
     aria-controls="sidebar"
     [attr.aria-expanded]="sidebarOpen()"
@@ -13,147 +13,202 @@
 
 <aside
   id="sidebar"
-  [class]="'sb-root ' + (sidebarOpen() ? 'sb-root--open' : '') + ' ' + a11yClass()"
+  [class]="'bg-slate-900 border-r border-slate-700 w-64 h-full flex flex-col fixed md:relative z-30 transition-transform duration-300 transform md:translate-x-0 '
+            + (sidebarOpen() ? 'translate-x-0' : '-translate-x-full') + ' '
+            + a11yClass()"
   [attr.lang]="user()?.idioma || 'es'"
   role="navigation"
   [attr.aria-label]="t()['appName']"
 >
-  <!-- ═══ Header ═══ -->
-  <div class="sb-header">
-    <div class="sb-logo-circle">
-      <lucide-angular [img]="GraduationCapIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+
+  <!-- Cabecera -->
+  <div class="h-16 flex items-center px-6 border-b border-slate-700">
+    <div class="flex items-center gap-2 text-violet-400" aria-hidden="true">
+      <lucide-angular [img]="LayersIcon" class="w-6 h-6"></lucide-angular>
+      <span class="font-bold text-lg tracking-tight text-violet-300">{{ t()['appName'] }}</span>
     </div>
-    <span class="sb-title">{{ t()['appName'] }}</span>
     <button
-      class="sb-close-btn"
+      class="ml-auto md:hidden text-slate-400 hover:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500 rounded"
       (click)="closeSidebar()"
       [attr.aria-label]="t()['cerrarMenu']"
     >
-      <lucide-angular [img]="CloseIcon" class="w-4 h-4"></lucide-angular>
+      <lucide-angular [img]="XIcon" class="w-5 h-5"></lucide-angular>
     </button>
   </div>
 
-  <!-- ═══ Profile ═══ -->
-  <div class="sb-profile">
-    <div class="sb-avatar" aria-hidden="true">{{ userInitials() }}</div>
-    <div class="sb-profile-info">
-      <p class="sb-name">{{ userFullName() }}</p>
-      <p class="sb-career">Ingeniería · 6to sem.</p>
+  <!-- Perfil de usuario -->
+  <div class="p-4 border-b border-slate-700">
+    <div
+      class="flex items-center gap-3 hover:bg-slate-800 p-2 rounded-lg cursor-pointer transition-colors"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="t()['abrirPerfil']"
+      (keydown.enter)="toggleProfileMenu.set(true)"
+    >
+      <div
+        class="w-10 h-10 rounded-full bg-gradient-to-tr from-violet-700 to-violet-400 text-white flex items-center justify-center font-bold shadow-sm"
+        aria-hidden="true"
+      >
+        {{ (user()?.nombres || '')[0] }}{{ (user()?.apellidos || '')[0] }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-slate-100 truncate">{{ user()?.nombres || '' }}</p>
+        <p class="text-xs text-slate-400 truncate">
+          {{ user()?.rol ? (user()?.rol | titlecase) : '' }}
+        </p>
+      </div>
+      <lucide-angular
+        (click)="toggleProfileMenu.set(true)"
+        [img]="LogOut"
+        class="w-4 h-4 text-slate-500"
+        aria-hidden="true"
+      ></lucide-angular>
     </div>
   </div>
 
-  <!-- ═══ Nav sections ═══ -->
-  <div class="sb-nav">
-    <!-- PRINCIPAL -->
-    <p class="sb-section-label" aria-hidden="true">{{ t()['seccionPrincipal'] }}</p>
-    <a [routerLink]="'dashboard'" routerLinkActive="sb-link--active" #r1="routerLinkActive"
-       (click)="closeSidebar()" class="sb-link" [class.sb-link--active]="r1.isActive">
-      <lucide-angular [img]="LayoutDashboardIcon" class="sb-link-icon" aria-hidden="true"></lucide-angular>
-      <span>{{ t()['dashboard'] }}</span>
-      <span class="sb-dot"></span>
-    </a>
-    <a [routerLink]="'courses'" routerLinkActive="sb-link--active" #r2="routerLinkActive"
-       (click)="closeSidebar()" class="sb-link" [class.sb-link--active]="r2.isActive">
-      <lucide-angular [img]="BookOpenIcon" class="sb-link-icon" aria-hidden="true"></lucide-angular>
-      <span>{{ t()['misCursos'] }}</span>
-      <span class="sb-dot"></span>
-    </a>
-    <a [routerLink]="'schedule'" routerLinkActive="sb-link--active" #r3="routerLinkActive"
-       (click)="closeSidebar()" class="sb-link" [class.sb-link--active]="r3.isActive">
-      <lucide-angular [img]="CalendarIcon" class="sb-link-icon" aria-hidden="true"></lucide-angular>
-      <span>{{ t()['horario'] }}</span>
-      <span class="sb-dot"></span>
+  <!-- Navegación -->
+  <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" [attr.aria-label]="t()['seccionPrincipal']">
+
+    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2" aria-hidden="true">
+      {{ t()['seccionPrincipal'] }}
+    </p>
+
+    <a [routerLink]="'dashboard'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
+       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+      <lucide-angular [img]="LayoutDashboardIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+      {{ t()['dashboard'] }}
     </a>
 
-    <!-- ACADÉMICO -->
-    <p class="sb-section-label" aria-hidden="true">{{ t()['seccionAcademico'] }}</p>
-    <a [routerLink]="'projects'" routerLinkActive="sb-link--active" #r6="routerLinkActive"
-       (click)="closeSidebar()" class="sb-link" [class.sb-link--active]="r6.isActive">
-      <lucide-angular [img]="BriefcaseIcon" class="sb-link-icon" aria-hidden="true"></lucide-angular>
-      <span>{{ t()['proyectos'] }}</span>
-      <span class="sb-dot"></span>
-    </a>
-    <a [routerLink]="'statistics'" routerLinkActive="sb-link--active" #r7="routerLinkActive"
-       (click)="closeSidebar()" class="sb-link" [class.sb-link--active]="r7.isActive">
-      <lucide-angular [img]="TrendingUpIcon" class="sb-link-icon" aria-hidden="true"></lucide-angular>
-      <span>{{ t()['estadisticas'] }}</span>
-      <span class="sb-dot"></span>
+    <a [routerLink]="'courses'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
+       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+      <lucide-angular [img]="BookOpenIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+      {{ t()['misCursos'] }}
     </a>
 
-    <!-- CUENTA -->
-    <p class="sb-section-label" aria-hidden="true">{{ t()['seccionCuenta'] }}</p>
-    <a [routerLink]="'profile'" routerLinkActive="sb-link--active" #r8="routerLinkActive"
-       (click)="closeSidebar()" class="sb-link" [class.sb-link--active]="r8.isActive">
-      <lucide-angular [img]="UserIcon" class="sb-link-icon" aria-hidden="true"></lucide-angular>
-      <span>{{ t()['profile'] }}</span>
-      <span class="sb-dot"></span>
+    <a [routerLink]="'/home/dashboard'"
+       [fragment]="'aula-ar'"
+       [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
+       class="nav-link flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+      <span class="flex items-center gap-3">
+        <lucide-angular [img]="BoxIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+        {{ t()['aulaAr'] }}
+      </span>
+      <span class="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-300">
+        Nuevo
+      </span>
+    </a>
+
+    <a [routerLink]="'schedule'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+       (click)="closeSidebar()"
+       class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+      <lucide-angular [img]="CalendarIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+      {{ t()['horario'] }}
     </a>
 
    
   </div>
 
-  <!-- ═══ Spacer (push pomodoro to bottom) ═══ -->
-  <div class="sb-spacer"></div>
+    <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2" aria-hidden="true">
+      {{ t()['cuenta'] }}
+    </p>
 
-  <!-- ═══ Pomodoro Widget ═══ -->
-  <div class="sb-pomo">
-    <div class="sb-pomo-card">
-      <div class="sb-pomo-header">
-        <div class="sb-pomo-header-left">
-          <lucide-angular [img]="ClockIcon" class="w-3.5 h-3.5 text-slate-400" aria-hidden="true"></lucide-angular>
-          <span class="sb-pomo-label">{{ t()['pomodoro'] }}</span>
+     <a [routerLink]="'profile'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+        (click)="closeSidebar()"
+        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+       <lucide-angular [img]="User" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+       {{ t()['profile'] }}
+     </a>
+
+     <a [routerLink]="'ar-viewer'" [routerLinkActive]="'text-violet-300 bg-violet-900/40'"
+        (click)="closeSidebar()"
+        class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+       <lucide-angular [img]="BoxIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+       {{ t()['realidadAumentada'] }}
+     </a>
+
+   </nav>
+
+  <!-- Timer -->
+  <div class="p-4 border-t border-slate-700 bg-slate-950">
+    <div id="tracker-widget"
+         class="flex items-center justify-between bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-sm"
+         role="timer"
+         [attr.aria-label]="t()['tiempoEstudio']">
+      <div class="flex items-center gap-3">
+        <div class="indicator w-3 h-3 rounded-full bg-slate-600" aria-hidden="true"></div>
+        <div>
+          <p id="timer-label" class="text-[10px] font-semibold text-slate-500 uppercase">
+            {{ t()['tiempoEstudio'] }}
+          </p>
+          <p id="timer-display" class="text-sm font-bold font-mono text-slate-100" aria-live="polite">00:00:00</p>
         </div>
-        <span class="sb-pomo-badge">{{ pomodoroStatusLabel() }}</span>
       </div>
-      <div class="sb-pomo-timer-row">
-        <button (click)="adjustPomodoro(-5)" class="sb-pomo-adj" [disabled]="pomodoroRunning()" title="-5 min">−</button>
-        <div class="sb-pomo-timer">{{ pomodoroDisplay() }}</div>
-        <button (click)="adjustPomodoro(5)" class="sb-pomo-adj" [disabled]="pomodoroRunning()" title="+5 min">+</button>
-      </div>
-      <div class="sb-pomo-progress">
-        <div class="sb-pomo-progress-bar" [style.width.%]="pomodoroProgress()"></div>
-      </div>
-      <div class="sb-pomo-controls">
-        <button (click)="togglePomodoro()" class="sb-pomo-btn">
-          @if(pomodoroRunning()) {
-            <lucide-angular [img]="PauseIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
-            <span>{{ t()['pomodoroPausar'] }}</span>
-          } @else {
-            <span>▶</span>
-            <span>{{ t()['pomodoroIniciar'] }}</span>
-          }
-        </button>
-        <button (click)="resetPomodoro()" class="sb-pomo-reset" title="Reset">
-          <lucide-angular [img]="RotateCcwIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
-        </button>
-      </div>
+      <button
+        id="btn-toggle-timer"
+        onclick="toggleTimer()"
+        class="w-8 h-8 rounded-full bg-slate-800 hover:bg-violet-900 flex items-center justify-center text-slate-400 hover:text-violet-300 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500"
+        [attr.aria-label]="t()['tiempoEstudio']"
+      >
+        <lucide-angular [img]="PlayIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
+      </button>
     </div>
   </div>
 </aside>
 
-<!-- Backdrop (mobile) -->
 @if (sidebarOpen()) {
-  <div class="sb-backdrop" (click)="closeSidebar()" aria-hidden="true"></div>
+  <div
+    class="fixed inset-0 bg-black/50 z-20 md:hidden"
+    (click)="closeSidebar()"
+    aria-hidden="true"
+  ></div>
 }
 
-<!-- Logout modal -->
 @if(toggleProfileMenu()) {
-<div class="sb-modal-overlay" role="dialog" aria-modal="true"
-     [attr.aria-labelledby]="'modal-title'" [attr.aria-describedby]="'modal-desc'">
-  <div [class]="'sb-modal ' + a11yClass()">
-    <div class="sb-modal-header">
-      <div class="sb-modal-icon" aria-hidden="true">
+<div
+  class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="'modal-title'"
+  [attr.aria-describedby]="'modal-desc'"
+>
+  <div
+    [class]="'bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl w-full max-w-sm flex flex-col p-6 space-y-5 ' + a11yClass()"
+  >
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-violet-900/50 text-violet-300 rounded-2xl flex items-center justify-center shrink-0" aria-hidden="true">
         <lucide-angular [img]="AlertTriangle" class="w-6 h-6"></lucide-angular>
       </div>
       <div>
-        <h3 id="modal-title" class="sb-modal-title">{{ t()['cerrarSesionTitulo'] }}</h3>
-        <p id="modal-desc" class="sb-modal-desc">{{ t()['cerrarSesionDesc'] }}</p>
+        <h3 id="modal-title" class="text-lg font-bold text-slate-100">
+          {{ t()['cerrarSesionTitulo'] }}
+        </h3>
+        <p id="modal-desc" class="text-xs text-slate-400 mt-0.5">
+          {{ t()['cerrarSesionDesc'] }}
+        </p>
       </div>
     </div>
-    <div class="sb-modal-body">{{ t()['cerrarSesionBody'] }} <strong>{{ t()['appName'] }}</strong>?</div>
-    <div class="sb-modal-actions">
-      <button (click)="toggleProfileMenu.set(false)" class="sb-btn-cancel">{{ t()['volverEstudio'] }}</button>
-      <button (click)="onLogout()" class="sb-btn-logout">{{ t()['confirmarSalida'] }}</button>
+
+    <div class="text-sm text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-700">
+      {{ t()['cerrarSesionBody'] }}
+      <span class="font-semibold text-slate-100">{{ t()['appName'] }}</span>?
+    </div>
+
+    <div class="flex gap-3 justify-end">
+      <button
+        (click)="toggleProfileMenu.set(false)"
+        class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
+      >
+        {{ t()['volverEstudio'] }}
+      </button>
+      <button
+        (click)="onLogout()"
+        class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500"
+      >
+        {{ t()['confirmarSalida'] }}
+      </button>
     </div>
   </div>
 </div>
