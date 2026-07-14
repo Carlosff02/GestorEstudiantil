@@ -1,604 +1,485 @@
 <section id="view-dashboard" class="view-section block space-y-6">
 
-  <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-    <div>
-      <h2 class="text-2xl font-bold text-slate-900">{{ greeting() }}</h2>
-      <p class="text-slate-500 mt-1">{{ t()['subtitulo'] }}</p>
-    </div>
-    <div class="text-sm font-medium text-slate-500 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"></span>
-      {{ t()['cicloActivo'] }}
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between">
-      <div>
-        <p class="text-sm font-medium text-slate-500 mb-1">{{ t()['apuntesSesiones'] }}</p>
-        <h3 id="metric-notes-count" class="text-2xl font-bold text-slate-800">0</h3>
-        <p class="text-xs font-medium text-emerald-500 mt-2 flex items-center gap-1">
-          <lucide-angular [img]="CheckIcon" class="w-3.5 h-3.5" aria-hidden="true"></lucide-angular>
-          {{ t()['organizadoPorClase'] }}
-        </p>
-      </div>
-      <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600" aria-hidden="true">
-        <lucide-angular [img]="FileTextIcon" class="w-5 h-5"></lucide-angular>
-      </div>
-    </div>
-
-    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between">
-      <div>
-        <p class="text-sm font-medium text-slate-500 mb-1">{{ t()['cursosRegistrados'] }}</p>
-        <h3 id="metric-courses-count" class="text-2xl font-bold text-slate-800">{{ courses.value()?.length }}</h3>
-        <p class="text-xs font-medium text-indigo-500 mt-2">{{ t()['conHorarios'] }}</p>
-      </div>
-      <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600" aria-hidden="true">
-        <lucide-angular [img]="LibraryIcon" class="w-5 h-5"></lucide-angular>
-      </div>
-    </div>
-
-    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between">
-      <div>
-        <p class="text-sm font-medium text-slate-500 mb-1">{{ t()['tiempoEstudio'] }}</p>
-        <h3 class="text-2xl font-bold text-slate-800">0h</h3>
-        <p class="text-xs font-medium text-slate-400 mt-2">{{ t()['medidoCronometro'] }}</p>
-      </div>
-      <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600" aria-hidden="true">
-        <lucide-angular [img]="ClockIcon" class="w-5 h-5"></lucide-angular>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-bold text-slate-800 flex items-center gap-2">
-          <lucide-angular [img]="CalendarDaysIcon" class="w-5 h-5 text-primary-500" aria-hidden="true"></lucide-angular>
-          {{ t()['clasesDelDia'] }}
-        </h3>
-        <button onclick="switchView('schedule')"
-                class="text-sm text-primary-600 font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-primary-400 rounded">
-          {{ t()['verHorario'] }}
-        </button>
-      </div>
-
-      <div class="space-y-4" id="dashboard-today-classes">
-        @if (getTodaySessions()?.length === 0) {
-          <div class="text-center py-8">
-            <lucide-angular [img]="ListIcon" class="w-12 h-12 text-slate-300 mx-auto mb-2" aria-hidden="true"></lucide-angular>
-            <p class="text-slate-400 text-sm">{{ t()['sinSesiones'] }}</p>
-          </div>
-        } @else {
-          <div class="space-y-4">
-            @for (item of getTodaySessions()?.sort((a, b) => a.sesion.horaInicio.localeCompare(b.sesion.horaInicio)); track item.sesion.id) {
-              <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-white hover:shadow-md transition-all">
-                <div class="text-center min-w-[60px]" aria-label="{{ formatTime(item.sesion.horaInicio) }} - {{ formatTime(item.sesion.horaFin) }}">
-                  <p class="text-xs font-bold text-slate-400 uppercase">{{ formatTime(item.sesion.horaInicio) }}</p>
-                  <div class="w-0.5 h-4 bg-slate-200 mx-auto my-1" aria-hidden="true"></div>
-                  <p class="text-xs font-bold text-slate-400 uppercase">{{ formatTime(item.sesion.horaFin) }}</p>
-                </div>
-
-                <div class="flex-1">
-                  <span class="text-[9px] font-bold px-2 py-1 rounded-full uppercase"
-                        [style.background]="item.course.color + '20'"
-                        [style.color]="item.course.color">
-                    {{ item.course.nombre }}
-                  </span>
-                  <h4 class="font-bold text-slate-900 mt-2 text-sm">{{ item.sesion.nombre }}</h4>
-                  <p class="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                    <lucide-angular [img]="InfoIcon" class="w-3.5 h-3.5 text-slate-400" aria-hidden="true"></lucide-angular>
-                    {{ item.sesion.aula || t()['aulaPorAsignar'] }}
-                  </p>
-                </div>
-
-                <a [routerLink]="'/home/courses'"
-                   class="px-3 py-2 bg-primary-600 text-white text-xs font-bold rounded-xl shadow-sm hover:bg-primary-700 transition-all flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-400">
-                  <lucide-angular [img]="FileTextIcon" class="w-3 h-3" aria-hidden="true"></lucide-angular>
-                  <span class="hidden sm:inline">{{ t()['verEnCursos'] }}</span>
-                </a>
-              </div>
-            }
-
-            <a [routerLink]="'/home/courses'"
-               class="block w-full mt-4 py-2.5 bg-slate-50 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-100 transition-colors text-center focus:outline-none focus:ring-2 focus:ring-slate-400">
-              {{ t()['verTodosCursos'] }}
-            </a>
-          </div>
-        }
-      </div>
-
-      <div id="aula-ar" class="aula-ar-card mt-6">
-        <div class="aula-ar-card__content">
-          <div class="aula-ar-card__copy">
-            <span class="aula-ar-card__badge">AULA AR · NUEVO</span>
-            <h3 class="aula-ar-card__title">Aula de Realidad Aumentada</h3>
-            <p class="aula-ar-card__description">
-              Explora modelos 3D interactivos de astronomía usando la cámara de tu dispositivo.
-            </p>
-            <p class="aula-ar-card__highlight">
-              Experiencias disponibles: Sistema Solar, Planetas, Vía Láctea, Luna, Eclipse y Constelaciones.
-            </p>
-            <div class="aula-ar-card__actions">
-              <button type="button" class="aula-ar-card__button aula-ar-card__button--primary" (click)="openArPanel()">
-                Iniciar Aula AR
-              </button>
-              <button type="button" class="aula-ar-card__button aula-ar-card__button--secondary" (click)="openArPanel()">
-                Ver experiencias
-              </button>
-            </div>
-          </div>
-          <div class="aula-ar-card__media" aria-hidden="true">
-            <img src="assets/ar/sistema-solar.jpg" alt="Sistema solar" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  @if (arPanelOpen) {
-    <div class="ar-drawer-backdrop" role="presentation" (click)="closeArPanel()">
-      <div class="ar-drawer" role="dialog" aria-modal="true" aria-label="Aula AR" (click)="$event.stopPropagation()">
-        <div class="ar-drawer__header">
-          <button type="button" class="ar-drawer__icon-button" (click)="closeArPanel()" aria-label="Volver">
-            ←
-          </button>
-          <div>
-            <p class="ar-drawer__eyebrow">AULA AR</p>
-            <h3 class="ar-drawer__title">{{ selectedArExperience.title }}</h3>
-          </div>
-          <button type="button" class="ar-drawer__icon-button" (click)="closeArPanel()" aria-label="Cerrar drawer">
-            ✕
-          </button>
-        </div>
-
-        <div class="ar-drawer__body">
-          <section class="ar-section">
-            <div class="ar-section__title-row">
-              <h4>Experiencias disponibles</h4>
-            </div>
-            <div class="ar-experience-list">
-              @for (experience of arExperiences; track experience.id) {
-                <button type="button"
-                        class="ar-experience-card"
-                        [class.is-active]="selectedArExperience.id === experience.id"
-                        (click)="selectArExperience(experience)">
-                  <img class="ar-experience-thumb" [src]="experience.imageUrl" [alt]="experience.shortTitle" />
-                  <div class="ar-experience-card__text">
-                    <p class="ar-experience-card__title">{{ experience.shortTitle }}</p>
-                    <p class="ar-experience-card__desc">{{ experience.description }}</p>
-                  </div>
-                </button>
-              }
-            </div>
-          </section>
-
-          <section class="ar-section">
-            <div class="ar-section__title-row">
-              <h4>Visor AR</h4>
-              <span class="ar-chip">{{ selectedArExperience.shortTitle }}</span>
-            </div>
-
-            <div class="ar-visor-shell">
-  <div class="ar-preview"
-       [class.ar-preview--planets]="selectedArExperience.modelType === 'planets'"
-       [class.ar-preview--eclipse]="selectedArExperience.modelType === 'eclipse'"
-       [class.ar-preview--milky]="selectedArExperience.modelType === 'milky-way'">
-       [class.ar-preview--milky]="selectedArExperience.modelType === 'milky-way'"
-    <video #cameraVideo class="ar-camera-video" autoplay muted playsinline [class.visible]="cameraActive"></video>
-
-                @if (!cameraActive) {
-                  <div class="ar-space-background">
-                    <span class="star star-1"></span>
-                    <span class="star star-2"></span>
-                    <span class="star star-3"></span>
-                    <span class="star star-4"></span>
-                    <span class="star star-5"></span>
-                  </div>
-                }
-
-                @if (cameraActive) {
-                  <div class="ar-video-overlay"></div>
-                }
-
-                @if (modelVisible) {
-                  <div class="ar-model-layer"
-                       [style.transform]="getArModelTransform()"
-                       (pointerdown)="onArPointerDown($event)"
-                       (pointermove)="onArPointerMove($event)"
-                       (pointerup)="onArPointerUp()"
-                       (pointerleave)="onArPointerUp()">
-                    @switch (selectedArExperience.modelType) {
-                      @case ('solar-system') {
-  <div class="solar-system-model"
-       [class.solar-system-model--orbiting]="solarMotion"
-       [class.solar-system-model--static]="!solarMotion">
-
-    <div class="solar-system-core">
-      <img src="assets/ar/sol.png" alt="Sol" />
-      @if (showLabels) {
-        <span class="solar-sun-label">Sol</span>
-      }
-    </div>
-
-    @if (showOrbits) {
-      <div class="orbit orbit-mercury"></div>
-      <div class="orbit orbit-venus"></div>
-      <div class="orbit orbit-earth"></div>
-      <div class="orbit orbit-mars"></div>
-      <div class="orbit orbit-jupiter"></div>
-      <div class="orbit orbit-saturn"></div>
-      <div class="orbit orbit-uranus"></div>
-      <div class="orbit orbit-neptune"></div>
-    }
-
-    <div class="solar-planet-unit solar-planet-unit--mercury">
-      <img class="solar-planet-img solar-planet-img--mercury" src="assets/ar/mercurio.png" alt="Mercurio" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Mercurio</span>
-      }
-    </div>
-
-    <div class="solar-planet-unit solar-planet-unit--venus">
-      <img class="solar-planet-img solar-planet-img--venus" src="assets/ar/venus.png" alt="Venus" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Venus</span>
-      }
-    </div>
-
-    <div class="solar-planet-unit solar-planet-unit--earth">
-      <img class="solar-planet-img solar-planet-img--earth" src="assets/ar/tierra.png" alt="Tierra" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Tierra</span>
-      }
-    </div>
-
-    <div class="solar-planet-unit solar-planet-unit--mars">
-      <img class="solar-planet-img solar-planet-img--mars" src="assets/ar/marte.png" alt="Marte" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Marte</span>
-      }
-    </div>
-
-    <div class="solar-planet-unit solar-planet-unit--jupiter">
-      <img class="solar-planet-img solar-planet-img--jupiter" src="assets/ar/jupiter.png" alt="Júpiter" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Júpiter</span>
-      }
-    </div>
-
-    <div class="solar-planet-unit solar-planet-unit--saturn">
-      <img class="solar-planet-img solar-planet-img--saturn" src="assets/ar/saturno.png" alt="Saturno" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Saturno</span>
-      }
-    </div>
-
-    <div class="solar-planet-unit solar-planet-unit--uranus">
-      <img class="solar-planet-img solar-planet-img--uranus" src="assets/ar/urano.png" alt="Urano" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Urano</span>
-      }
-    </div>
-
-    <div class="solar-planet-unit solar-planet-unit--neptune">
-      <img class="solar-planet-img solar-planet-img--neptune" src="assets/ar/neptuno.png" alt="Neptuno" />
-      @if (showLabels) {
-        <span class="solar-planet-label">Neptuno</span>
-      }
-    </div>
-  </div>
-}
-                      @case ('planets') {
-  <div class="planet-clean-scene"
-       [class.planet-clean-scene--rotation]="planetMotionMode === 'rotation'"
-       [class.planet-clean-scene--translation]="planetMotionMode === 'translation'">
-
-    <div class="planet-clean-stage">
-      @if (planetMotionMode === 'translation') {
-        <div class="planet-clean-sun">
-          <img src="assets/ar/sol.png" alt="Sol" />
-          <span>Sol</span>
-        </div>
-
-        <div class="planet-clean-orbit">
-          <div class="planet-clean-orbit-track">
-            <img class="planet-clean-orbiting"
-                 [src]="selectedArPlanet.imageUrl"
-                 [alt]="selectedArPlanet.name" />
-          </div>
-        </div>
-      }
-
-      <div class="planet-clean-main">
-        <img class="planet-clean-image"
-             [src]="selectedArPlanet.imageUrl"
-             [alt]="selectedArPlanet.name" />
-
-        @if (planetMotionMode === 'rotation') {
-          <span class="planet-clean-axis"></span>
-        }
-      </div>
-
-      @if (showLabels) {
-        @if (planetMotionMode === 'rotation') {
-          <span class="planet-clean-label planet-clean-label--top">
-            Rotación sobre su eje
-          </span>
-          <span class="planet-clean-label planet-clean-label--bottom">
-            {{ selectedArPlanet.rotation }}
-          </span>
-        } @else {
-          <span class="planet-clean-label planet-clean-label--top">
-            Traslación alrededor del Sol
-          </span>
-          <span class="planet-clean-label planet-clean-label--bottom">
-            {{ selectedArPlanet.translation }}
-          </span>
-        }
-
-        <span class="planet-clean-label planet-clean-label--right">
-          {{ selectedArPlanet.type }}
-        </span>
-      }
-    </div>
-
-    <div class="planet-clean-panel" (pointerdown)="$event.stopPropagation()">
-      <div class="planet-clean-picker">
-        <button type="button" class="planet-clean-arrow" (click)="previousArPlanet()">‹</button>
+  <!-- ════════════════════ 1. HERO + Próximo Examen ════════════════════ -->
+  <div class="relative overflow-hidden rounded-3xl p-5 sm:p-6 text-white shadow-xl shadow-black/30" style="background: linear-gradient(to right, #6d28d9, #9333ea);">
+    <div class="relative z-10">
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-          <span>Planeta</span>
-          <strong>{{ selectedArPlanet.name }}</strong>
+          <p class="text-indigo-200 text-sm font-medium">{{ t()['saludo'] }},</p>
+          <h2 class="text-2xl sm:text-3xl font-black tracking-tight">{{ (user()?.nombres ?? '').split(' ')[0] || 'Estudiante' }}!</h2>
+          <p class="text-indigo-200 text-sm mt-0.5">{{ formatDateFull(today()) }}</p>
         </div>
-        <button type="button" class="planet-clean-arrow" (click)="nextArPlanet()">›</button>
+        <div class="flex flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            {{ t()['cicloActivo'] }}
+          </span>
+        </div>
       </div>
-
-      <div class="planet-clean-toggle">
-        <button type="button"
-                [class.is-active]="planetMotionMode === 'rotation'"
-                (click)="selectPlanetMotion('rotation')">
-          Rotación
-        </button>
-
-        <button type="button"
-                [class.is-active]="planetMotionMode === 'translation'"
-                (click)="selectPlanetMotion('translation')">
-          Traslación
-        </button>
-      </div>
-
-      <div class="planet-clean-info">
-        <h5>{{ selectedArPlanet.name }}</h5>
-        <p>{{ selectedArPlanet.description }}</p>
-
-        @if (planetMotionMode === 'rotation') {
-          <div class="planet-clean-highlight">
-            <strong>Movimiento de rotación</strong>
-            <span>
-              Gira sobre su propio eje en <b>{{ selectedArPlanet.rotation }}</b>.
-            </span>
+      <!-- Feature card: próxima sesión + preparación -->
+      <div class="mt-4 flex flex-col sm:flex-row gap-3">
+        @if (nextSession(); as ns) {
+        <div class="flex-1 bg-white/10 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-400/20 flex items-center justify-center shrink-0">
+            <lucide-angular [img]="CalendarIcon" class="w-6 h-6 text-amber-300"></lucide-angular>
           </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[10px] font-bold text-amber-200 uppercase tracking-wider">{{ t()['proximaSesion'] || 'Próxima Sesión' }}</p>
+            <p class="text-base font-black truncate">{{ ns.course.nombre }}{{ ns.sesion.nombre ? ': ' + ns.sesion.nombre : '' }}</p>
+            <p class="text-indigo-200 text-xs">{{ formatDate(ns.sesion.horaInicio) }} · {{ formatTime(ns.sesion.horaInicio) }}</p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-xs font-bold text-amber-200">{{ t()['aula'] || 'Aula' }}</p>
+            <p class="text-2xl font-black text-emerald-300">{{ ns.sesion.aula || '—' }}</p>
+          </div>
+        </div>
         } @else {
-          <div class="planet-clean-highlight">
-            <strong>Movimiento de traslación</strong>
-            <span>
-              Orbita alrededor del Sol en <b>{{ selectedArPlanet.translation }}</b>.
-            </span>
+        <div class="flex-1 bg-white/10 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-400/20 flex items-center justify-center shrink-0">
+            <lucide-angular [img]="CalendarIcon" class="w-6 h-6 text-amber-300"></lucide-angular>
           </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[10px] font-bold text-amber-200 uppercase tracking-wider">{{ t()['proximaSesion'] || 'Próxima Sesión' }}</p>
+            <p class="text-base font-black truncate">—</p>
+            <p class="text-indigo-200 text-xs">{{ t()['sinSesiones'] || 'No hay sesiones programadas' }}</p>
+          </div>
+        </div>
         }
-      </div>
-    </div>
-  </div>
-}
-                      @case ('milky-way') {
-  <div class="milky-pro-scene">
-
-    @if (showOrbits) {
-      <div class="milky-pro-halo"></div>
-      <div class="milky-pro-orbit milky-pro-orbit--one"></div>
-      <div class="milky-pro-orbit milky-pro-orbit--two"></div>
-    }
-
-    <div class="milky-pro-galaxy">
-      <div class="milky-pro-core"></div>
-      <div class="milky-pro-solar-marker"></div>
-    </div>
-
-    @if (showLabels) {
-      <span class="milky-pro-label milky-pro-label--halo">Halo estelar</span>
-      <span class="milky-pro-label milky-pro-label--arms">Brazos espirales</span>
-      <span class="milky-pro-label milky-pro-label--core">Núcleo galáctico</span>
-      <span class="milky-pro-label milky-pro-label--solar">Sistema Solar</span>
-    }
-
-    <div class="milky-pro-panel">
-      <div class="milky-pro-icon">
-        <span></span>
-      </div>
-
-      <div class="milky-pro-copy">
-        <h5>Vía Láctea</h5>
-        <p>
-          Nuestra galaxia espiral contiene miles de millones de estrellas,
-          nebulosas, planetas y sistemas como el Sistema Solar.
-        </p>
-
-        <div class="milky-pro-stats">
-          <span>Galaxia espiral</span>
-          <span>~100 mil años luz</span>
-          <span>Miles de millones de estrellas</span>
+        <div class="sm:w-56 bg-white/10 backdrop-blur-sm rounded-2xl p-4 flex flex-col justify-center">
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="text-indigo-200 font-semibold">{{ t()['clasesHoy'] || 'Clases hoy' }}</span>
+            <span class="text-emerald-300 font-black">{{ eventosHoy().length }}</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-indigo-200 font-semibold">{{ t()['totalSesiones'] || 'Total sesiones' }}</span>
+            <span class="text-white font-black">{{ metrics().asistencia }}</span>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
-}
-                      @case ('moon-phases') {
-  <div class="moon-pro-scene">
 
-    <div class="moon-pro-sun">
-      <span>Sol</span>
-    </div>
-
-    <div class="moon-pro-light"></div>
-
-    <div class="moon-pro-orbit-system">
-      <div class="moon-pro-earth">
-        <img src="assets/ar/tierra.png" alt="Tierra" />
-        @if (showLabels) {
-          <span>Tierra</span>
-        }
+  <!-- ════════════════════ 2. KPIS con sparklines ════════════════════ -->
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <div class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+          <lucide-angular [img]="LibraryIcon" class="w-4 h-4"></lucide-angular>
+        </div>
+        <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">{{ courses.value()?.length ?? 0 }}</span>
       </div>
-
-      @if (showOrbits) {
-        <div class="moon-pro-orbit-line"></div>
-      }
-
-      <div class="moon-pro-orbiting">
-        <img src="assets/ar/luna.png" alt="Luna orbitando" />
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ courses.value()?.length ?? 0 }}</p>
+      <p class="text-[11px] text-slate-500">{{ t()['cursosRegistrados'] }}</p>
+      <div class="metric-spark mt-1">@for(h of [8,12,18,22,14,10,16]; track $index){<span class="bg-indigo-400" [style.height.px]="h"></span>}</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <div class="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+          <lucide-angular [img]="ZapIcon" class="w-4 h-4"></lucide-angular>
+        </div>
+        <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">+2%</span>
       </div>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ metrics().totalCreditos }}</p>
+      <p class="text-[11px] text-slate-500">{{ t()['creditos'] || 'Créditos' }}</p>
+      <div class="metric-spark mt-1">@for(h of [6,14,20,16,10,18,12]; track $index){<span class="bg-amber-400" [style.height.px]="h"></span>}</div>
     </div>
-
-    <div class="moon-pro-main">
-      <img src="assets/ar/luna.png" alt="Fase lunar" />
-      <div class="moon-pro-shadow"></div>
-      @if (showLabels) {
-        <span class="moon-pro-main-label">Cambio de fase lunar</span>
-      }
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <div class="w-9 h-9 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
+          <lucide-angular [img]="BookOpenIcon" class="w-4 h-4"></lucide-angular>
+        </div>
+        <span class="text-[9px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-full">{{ metrics().tareasPendientes }}</span>
+      </div>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ metrics().tareasPendientes }}</p>
+      <p class="text-[11px] text-slate-500">{{ t()['tareasPendientes'] || 'Tareas pend.' }}</p>
+      <div class="metric-spark mt-1">@for(h of [10,16,22,12,8,14,18]; track $index){<span class="bg-rose-400" [style.height.px]="h"></span>}</div>
     </div>
-
-    <div class="moon-pro-info">
-      <strong>Fases de la Luna</strong>
-      <p>La fase cambia según la posición de la Luna respecto al Sol y la Tierra.</p>
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <div class="w-9 h-9 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600">
+          <lucide-angular [img]="BriefcaseIcon" class="w-4 h-4"></lucide-angular>
+        </div>
+        <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">{{ metrics().proyectosActivos }}</span>
+      </div>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ metrics().proyectosActivos }}</p>
+      <p class="text-[11px] text-slate-500">{{ t()['proyectosActivos'] || 'Proyectos' }}</p>
+      <div class="metric-spark mt-1">@for(h of [8,18,22,14,6,20,10]; track $index){<span class="bg-sky-400" [style.height.px]="h"></span>}</div>
     </div>
-
-    <div class="moon-pro-timeline">
-      <span>Luna nueva</span>
-      <span>Creciente</span>
-      <span>Cuarto</span>
-      <span>Gibosa</span>
-      <span>Llena</span>
-      <span>Menguante</span>
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 hover:shadow-md transition-shadow">
+      <div class="flex items-center justify-between">
+        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+          <lucide-angular [img]="TargetIcon" class="w-4 h-4"></lucide-angular>
+        </div>
+        <span class="text-[9px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full">{{ metrics().asistencia }}</span>
+      </div>
+      <p class="text-2xl font-bold text-slate-900 mt-1">{{ metrics().asistencia }}</p>
+      <p class="text-[11px] text-slate-500">{{ t()['sesiones'] || 'Sesiones' }}</p>
+      <div class="metric-spark mt-1">@for(h of [12,18,20,14,10,16,22]; track $index){<span class="bg-emerald-400" [style.height.px]="h"></span>}</div>
     </div>
-
   </div>
-}
-                      @case ('eclipse') {
-  <div class="eclipse-orbit-scene">
 
-    @if (showOrbits) {
-      <div class="eclipse-orbit-light"></div>
-      <div class="eclipse-orbit-alignment"></div>
-    }
+  <!-- ════════════════════ CONTENIDO PRINCIPAL ════════════════════ -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-    <div class="eclipse-orbit-sun">
-      <img src="assets/ar/sol.png" alt="Sol" />
-    </div>
+    <!-- ─── COLUMNA IZQUIERDA (2/3) ─── -->
+    <div class="lg:col-span-2 space-y-5">
 
-    <div class="eclipse-orbit-shadow-cone"></div>
-
-    <div class="eclipse-earth-zone">
-      @if (showOrbits) {
-        <div class="eclipse-moon-orbit-line"></div>
-      }
-
-      <img class="eclipse-earth-img" src="assets/ar/tierra.png" alt="Tierra" />
-
-      <div class="eclipse-earth-shadow"></div>
-
-      <img class="eclipse-moon-img" src="assets/ar/luna.png" alt="Luna" />
-    </div>
-
-    @if (showLabels) {
-      <span class="eclipse-orbit-label eclipse-orbit-label--sun">Sol</span>
-      <span class="eclipse-orbit-label eclipse-orbit-label--moon">Luna orbitando</span>
-      <span class="eclipse-orbit-label eclipse-orbit-label--eclipse">Eclipse</span>
-      <span class="eclipse-orbit-label eclipse-orbit-label--earth">Tierra</span>
-    }
-
-    <div class="eclipse-orbit-panel">
-      <strong>Eclipse solar</strong>
-      <p>
-        La Luna orbita la Tierra. Cuando queda entre el Sol y la Tierra,
-        bloquea la luz solar y proyecta sombra.
-      </p>
-      <span>Sol · Luna · Tierra</span>
-    </div>
-
-  </div>
-}
-                      @case ('constellations') {
-                        <div class="constellation-scene">
-                          <div class="constellation-stars"></div>
-                          <div class="constellation-card">
-                            <h5>Orión</h5>
-                            <p>Una de las constelaciones más conocidas y fáciles de identificar en el cielo.</p>
-                          </div>
-                        </div>
-                      }
-                    }
-                  </div>
-                } @else {
-                  <div class="ar-model-placeholder">Modelo oculto</div>
-                }
-
-                <div class="ar-controls">
-                  <button type="button" class="ar-control-btn" (click)="toggleOrbits()">Órbitas</button>
-
-                  @if (selectedArExperience.modelType === 'solar-system') {
-                    <button type="button" class="ar-control-btn" (click)="toggleSolarMotion()">
-                      {{ solarMotion ? 'Fijar' : 'Orbitar' }}
-                    </button>
-                  }
-
-                  <button type="button" class="ar-control-btn" (click)="toggleLabels()">Etiquetas</button>
-                  <button type="button" class="ar-control-btn" (click)="centerArModel()">Centrar</button>
-                  <button type="button" class="ar-control-btn" (click)="increaseArScale()">+</button>
-                  <button type="button" class="ar-control-btn" (click)="decreaseArScale()">−</button>
-                </div>
-
-                <div class="ar-visor__message">
-                  @if (cameraActive) {
-                    <span>Apunta hacia una superficie plana para una mejor experiencia AR.</span>
-                  } @else {
-                    <span>Modo modelo 3D: explora el contenido sin usar cámara.</span>
-                  }
-                </div>
-              </div>
-
-              <div class="ar-visor-actions">
-                <button type="button" class="ar-action-btn" (click)="toggleModelVisibility()">{{ modelVisible ? 'Ocultar modelo' : 'Mostrar modelo 3D' }}</button>
-                <button type="button" class="ar-action-btn ar-action-btn--accent" (click)="toggleCamera()">
-                  {{ cameraLoading ? 'Activando...' : (cameraActive ? 'Desactivar cámara' : 'Activar cámara') }}
-                </button>
-              </div>
-              @if (cameraError) {
-                <p class="ar-camera-error">{{ cameraError }}</p>
-              }
-            </div>
-          </section>
-
-          <section class="ar-section">
-            <div class="ar-section__title-row">
-              <h4>Actividad académica</h4>
-              <span class="ar-chip">Dinámica</span>
-            </div>
-            <p class="ar-activity-copy">Explora el modelo 3D de {{ selectedArExperience.shortTitle }} y responde:</p>
-            <div class="ar-questions">
-              @for (question of selectedArExperience.questions; track question; let i = $index) {
-                <label class="ar-question">
-                  <span>{{ question }}</span>
-                  <textarea [(ngModel)]="arAnswers[i]" rows="2" placeholder="Escribe tu respuesta"></textarea>
-                </label>
-              }
-            </div>
-            <button type="button" class="ar-submit-btn" (click)="submitArAnswers()">Enviar respuestas</button>
-            @if (arSubmitted) {
-              <p class="ar-success">Respuestas enviadas correctamente.</p>
+      <!-- 3. SVG Área Chart: Productividad Semanal -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
+            <lucide-angular [img]="TrendingUpIcon" class="w-4 h-4 text-indigo-500"></lucide-angular>
+            Productividad Semanal
+          </h3>
+          <button (click)="toggleProductividadUnit()"
+                  class="text-[10px] font-semibold text-slate-400 bg-slate-50 hover:bg-slate-100 px-2 py-1 rounded-full transition-colors">
+            {{ productividadUnit() === 'hours' ? 'Ver en min' : 'Ver en hrs' }}
+          </button>
+        </div>
+        <div style="position:relative">
+          @let cp = chartPoints();
+          @let pts = cp.points;
+          @let n = pts.length;
+          @let lastPt = pts[n-1];
+          @let firstPt = pts[0];
+          @let baseY = 162;
+          <svg class="area-svg" viewBox="0 0 700 180" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6366f1" stop-opacity=".35"/>
+                <stop offset="100%" stop-color="#6366f1" stop-opacity=".02"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid lines -->
+            @for(gv of [0,1,2,3,4]; track gv) {
+              @let gy = 10 + (gv / cp.gridSteps) * 142;
+              <line x1="38" [attr.y1]="gy" x2="680" [attr.y2]="gy" stroke="#e2e8f0" stroke-width="1"/>
+              <text x="32" [attr.y]="gy+4" fill="#94a3b8" font-size="9" font-weight="600" text-anchor="end">{{ ((cp.maxM / cp.gridSteps) * gv).toFixed(cp.unit === 'hours' ? 1 : 0) }}</text>
             }
-          </section>
+            <!-- Fill area -->
+            <polygon class="area-chart-fill" [attr.points]="pts.map(p => p.x+','+p.y).join(' ') + ' ' + lastPt.x + ',' + baseY + ' ' + firstPt.x + ',' + baseY"/>
+            <!-- Line -->
+            <polyline class="area-chart-line" [attr.points]="pts.map(p => p.x+','+p.y).join(' ')"/>
+            <!-- Dots + labels -->
+            @for(p of pts; track $index) {
+              <circle [attr.cx]="p.x" [attr.cy]="p.y" r="3.5" class="area-chart-dot"/>
+              <text [attr.x]="p.x" y="170" class="area-chart-label">{{ p.l }}</text>
+              <text [attr.x]="p.x" [attr.y]="p.y-9" class="area-chart-meta">{{ p.h }}{{ cp.unit === 'hours' ? 'h' : 'min' }}</text>
+            }
+          </svg>
         </div>
       </div>
+
+      <!-- 4. SVG Horizontal Bars: Rendimiento por Curso -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <div class="flex items-baseline justify-between mb-2">
+          <h3 class="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-indigo-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-4"/></svg>
+            Rendimiento por Curso
+          </h3>
+          <span class="text-[10px] text-slate-400 font-medium">Tu nota vs promedio de la clase</span>
+        </div>
+        @let rb = rendimientoBars();
+        <svg [attr.viewBox]="'0 0 ' + rb.svgW + ' ' + rb.totalH" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">
+          <defs>
+            <linearGradient id="barNotaGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#6366f1"/>
+              <stop offset="100%" stop-color="#818cf8"/>
+            </linearGradient>
+          </defs>
+          <!-- Vertical grid lines + X-axis labels -->
+          @for(t of rb.ticks; track t) {
+            @let gx = rb.padL + ((t - rb.minScore) / (rb.maxScore - rb.minScore)) * rb.chartW;
+            <line [attr.x1]="gx" y1="0" [attr.x2]="gx" [attr.y2]="rb.totalH - rb.padB" stroke="#e2e8f0" stroke-dasharray="4,4" stroke-width="1"/>
+            <text [attr.x]="gx" [attr.y]="rb.totalH - 6" fill="#94a3b8" font-size="9" font-weight="600" text-anchor="middle">{{ t }}</text>
+          }
+          <!-- Bars + course names -->
+          @for(r of rb.items; track $index) {
+            <!-- Class average bar (gray) -->
+            @if(r.promW > 0) {
+              <rect [attr.x]="rb.padL" [attr.y]="r.y - 3" [attr.width]="r.promW" height="6" rx="3" fill="#cbd5e1"/>
+            }
+            <!-- Student grade bar (purple) -->
+            @if(r.notaW > 0) {
+              <rect [attr.x]="rb.padL" [attr.y]="r.y - 5" [attr.width]="r.notaW" height="10" rx="4" fill="url(#barNotaGrad)"/>
+            }
+            <!-- Course name -->
+            <text x="12" [attr.y]="r.y + 4" fill="#334155" font-size="10.5" font-weight="600">{{ r.curso }}</text>
+          }
+        </svg>
+        <!-- Legend -->
+        <div class="flex items-center gap-4 mt-2 text-[10px] text-slate-500">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm" style="background:#6366f1"></span> Tu nota</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm" style="background:#cbd5e1"></span> Prom. clase</span>
+        </div>
+      </div>
+
     </div>
-  }
+
+    <!-- ─── COLUMNA DERECHA (1/3) ─── -->
+    <div class="space-y-5">
+
+      <!-- Agenda del Día -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-slate-800 flex items-center gap-1.5 text-sm">
+            <lucide-angular [img]="CalendarDaysIcon" class="w-4 h-4 text-indigo-500"></lucide-angular>
+            {{ t()['clasesDelDia'] }}
+          </h3>
+          <a [routerLink]="'/home/schedule'" class="text-[10px] text-primary-600 font-medium hover:underline">{{ t()['verHorario'] }}</a>
+        </div>
+        <div class="space-y-2">
+          @for(e of eventosHoy(); track $index) {
+            <div class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 bg-white hover:shadow-sm transition-all">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-[10px] shrink-0" [style.background]="e.color">
+                {{ e.tipo === 'clase' ? 'CL' : e.tipo === 'entrega' ? 'EN' : e.tipo === 'estudio' ? 'ES' : 'TU' }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[11px] font-bold text-slate-800 truncate">{{ e.titulo }}</p>
+                <p class="text-[10px] text-slate-500">{{ e.hora }}</p>
+              </div>
+              <span class="text-[9px] font-semibold px-2 py-0.5 rounded-full shrink-0" [style.background]="e.color + '18'" [style.color]="e.color">
+                {{ e.tipo === 'clase' ? 'Clase' : e.tipo === 'entrega' ? 'Entrega' : e.tipo === 'estudio' ? 'Estudio' : 'Tutoría' }}
+              </span>
+            </div>
+          }
+          <a [routerLink]="'/home/courses'" class="block w-full mt-2 py-2 bg-slate-50 text-slate-600 rounded-xl text-xs font-medium hover:bg-slate-100 transition-colors text-center">
+            {{ t()['verTodosCursos'] }}
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════ 8. AULA DE REALIDAD AUMENTADA ════════════════════ -->
+  <div class="aula-ar-card" id="aula-ar">
+    <div class="aula-ar-card__content">
+      <div class="aula-ar-card__copy">
+        <span class="aula-ar-card__badge">{{ t()['nuevo'] || 'NUEVO' }}</span>
+        <h3 class="aula-ar-card__title">{{ t()['aulaAr'] || 'Aula de Realidad Aumentada' }}</h3>
+        <p class="aula-ar-card__description">
+          {{ t()['aulaArDesc'] || 'Explora el sistema solar, planetas 3D, la Vía Láctea y más. Una experiencia educativa inmersiva directamente en tu entorno real.' }}
+          <strong class="aula-ar-card__highlight">{{ t()['sinCamara'] || '¡Sin cámara también funciona!' }}</strong>
+        </p>
+        <div class="aula-ar-card__actions">
+          <button (click)="openArPanel()" class="aula-ar-card__button aula-ar-card__button--primary">
+            <lucide-angular [img]="HistoryIcon" class="w-4 h-4" aria-hidden="true"></lucide-angular>
+            {{ t()['iniciarAulaAr'] || 'Iniciar Aula AR' }}
+          </button>
+          <button class="aula-ar-card__button aula-ar-card__button--secondary">
+            {{ t()['verExperiencias'] || 'Ver experiencias' }}
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="aula-ar-card__media">
+        <img src="assets/ar/sistema-solar.jpg" alt="AR Preview" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22220%22><rect fill=%22%2314b8a6%22 width=%22260%22 height=%22220%22 rx=%2224%22/><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2220%22 font-weight=%22700%22>Realidad Aumentada</text></svg>'">
+      </div>
+    </div>
+  </div>
+
 </section>
 
+<!-- ════════════════════ AR DRAWER (se mantiene igual) ════════════════════ -->
+@if(arPanelOpen) {
+  <div class="ar-drawer-backdrop" (click)="closeArPanel()">
+    <div class="ar-drawer" (click)="$event.stopPropagation()">
+      <div class="ar-drawer__header">
+        <div class="ar-drawer__title">
+          <lucide-angular [img]="HistoryIcon" class="w-5 h-5" aria-hidden="true"></lucide-angular>
+          <h3>{{ selectedArExperience.title }}</h3>
+        </div>
+        <button (click)="closeArPanel()" class="ar-drawer__close" [attr.aria-label]="'Cerrar'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="ar-drawer__nav">
+        @for(exp of arExperiences; track exp.id) {
+          <button (click)="selectArExperience(exp)"
+                  [class.is-active]="selectedArExperience.id === exp.id"
+                  class="ar-nav-btn">
+            {{ exp.shortTitle }}
+          </button>
+        }
+      </div>
+
+      <div class="ar-drawer__body">
+        <div class="ar-preview" [class.ar-preview--planets]="selectedArExperience.modelType === 'planets'">
+          <video #cameraVideo class="ar-camera-video" [class.visible]="cameraActive" playsinline muted></video>
+          @if(cameraActive) { <div class="ar-video-overlay"></div> }
+          @if(!cameraActive) { <div class="ar-space-background"></div> }
+
+          @if(modelVisible) {
+            <div class="ar-model-layer"
+                 [style.transform]="getArModelTransform()"
+                 (pointerdown)="onArPointerDown($event)" (pointermove)="onArPointerMove($event)" (pointerup)="onArPointerUp()">
+              @switch(selectedArExperience.modelType) {
+                @case('solar-system') {
+                  <div class="solar-system-model" [class.solar-system-model--orbiting]="solarMotion" [class.solar-system-model--static]="!solarMotion">
+                    <div class="solar-system-core"><img src="assets/ar/sol.png" alt="Sol" onerror="this.style.display='none'"><span class="solar-sun-label">Sol</span></div>
+                    <div class="orbit orbit-mercury" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    <div class="orbit orbit-venus" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    <div class="orbit orbit-earth" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    <div class="orbit orbit-mars" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    <div class="orbit orbit-jupiter" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    <div class="orbit orbit-saturn" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    <div class="orbit orbit-uranus" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    <div class="orbit orbit-neptune" [style.display]="showOrbits ? 'block' : 'none'"></div>
+                    @for(p of arPlanets; track p.id) {
+                      <div class="solar-planet-unit solar-planet-unit--{{p.id}}" [style.display]="showLabels ? 'flex' : 'none'">
+                        <img class="solar-planet-img solar-planet-img--{{p.id}}" [src]="p.imageUrl" [alt]="p.name" onerror="this.style.display='none'">
+                        <span class="solar-planet-label">{{ p.name }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+                @case('planets') {
+                  <div class="planet-3d-scene" [class.planet-3d-scene--rotation]="planetMotionMode === 'rotation'" [class.planet-3d-scene--translation]="planetMotionMode === 'translation'">
+                    <div class="planet-3d-switcher">
+                      <button (click)="previousArPlanet()" class="planet-nav-btn">‹</button>
+                      <div class="planet-3d-current">
+                        <span>{{ arPlanets[currentPlanetIndex].type }}</span>
+                        <strong>{{ arPlanets[currentPlanetIndex].name }}</strong>
+                      </div>
+                      <button (click)="nextArPlanet()" class="planet-nav-btn">›</button>
+                    </div>
+                    <div class="planet-3d-tabs">
+                      @for(p of arPlanets; track p.id; let i = $index) {
+                        <button (click)="selectArPlanet(i)" class="planet-tab-btn" [class.is-active]="currentPlanetIndex === i">{{ p.name }}</button>
+                      }
+                    </div>
+                    <div class="planet-3d-stage">
+                      <div class="planet-3d-sun"><img src="assets/ar/sol.png" alt="" onerror="this.style.display='none'"><span>Sol</span></div>
+                      <div class="planet-3d-translation-orbit"></div>
+                      <img class="planet-3d-orbit-planet" [src]="selectedArPlanet.imageUrl" [alt]="selectedArPlanet.name" onerror="this.style.display='none'">
+                      <div class="planet-3d-main"><img class="planet-3d-image" [src]="selectedArPlanet.imageUrl" [alt]="selectedArPlanet.name" onerror="this.style.display='none'"></div>
+                      <div class="planet-axis-line"></div>
+                      <div class="planet-3d-label planet-3d-label--atmosphere">{{ selectedArPlanet.atmosphere }}</div>
+                      @if(planetMotionMode === 'rotation') {
+                        <div class="planet-3d-label planet-3d-label--rotation">Rotación: {{ selectedArPlanet.rotation }}</div>
+                      }
+                      @if(planetMotionMode === 'translation') {
+                        <div class="planet-3d-label planet-3d-label--translation">Traslación: {{ selectedArPlanet.translation }}</div>
+                      }
+                      <div class="planet-3d-label planet-3d-label--surface">{{ selectedArPlanet.surface }}</div>
+                    </div>
+                    <div class="planet-3d-info">
+                      <h5>{{ selectedArPlanet.name }}</h5>
+                      <p>{{ selectedArPlanet.description }}</p>
+                      <div class="planet-3d-stats planet-3d-stats--clean">
+                        <span>{{ selectedArPlanet.type }}</span>
+                        <span>{{ selectedArPlanet.rotation }}</span>
+                        <span>{{ selectedArPlanet.translation }}</span>
+                      </div>
+                    </div>
+                    <div class="planet-3d-motion-panel">
+                      <div class="planet-3d-motion-tabs">
+                        <button (click)="selectPlanetMotion('rotation')" class="planet-motion-btn" [class.is-active]="planetMotionMode === 'rotation'">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Rotación
+                        </button>
+                        <button (click)="selectPlanetMotion('translation')" class="planet-motion-btn" [class.is-active]="planetMotionMode === 'translation'">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></svg> Traslación
+                        </button>
+                      </div>
+                      <div class="planet-3d-motion-card">
+                        <strong>{{ planetMotionMode === 'rotation' ? ('Rotación: ' + selectedArPlanet.rotation) : ('Traslación: ' + selectedArPlanet.translation) }}</strong>
+                        <p>{{ planetMotionMode === 'rotation' ? 'El planeta gira sobre su propio eje.' : 'El planeta orbita alrededor del Sol.' }}</p>
+                        <b>{{ selectedArPlanet.name }}</b>
+                        <span>{{ selectedArPlanet.type }} · {{ selectedArPlanet.atmosphere }}</span>
+                      </div>
+                    </div>
+                  </div>
+                }
+                @case('milky-way') {
+                  <div class="milky-way-scene">
+                    <div class="milky-way-stars"></div>
+                    <img class="milky-way-scene__galaxy" src="assets/ar/via-lactea.jpg" alt="Vía Láctea" onerror="this.style.display='none'">
+                    <div class="info-card constellation-card">
+                      <p>La Vía Láctea es una galaxia espiral que contiene entre 100 y 400 mil millones de estrellas.</p>
+                    </div>
+                  </div>
+                }
+                @case('moon-phases') {
+                  <div class="moon-scene">
+                    <div class="moon-phase"><img src="assets/ar/luna-nueva.png" alt="Luna Nueva" onerror="this.style.display='none'"><span>Nueva</span></div>
+                    <div class="moon-phase"><img src="assets/ar/luna-creciente.png" alt="Creciente" onerror="this.style.display='none'"><span>Creciente</span></div>
+                    <div class="moon-phase"><img src="assets/ar/luna-llena.png" alt="Llena" onerror="this.style.display='none'"><span>Llena</span></div>
+                    <div class="moon-phase"><img src="assets/ar/luna-menguante.png" alt="Menguante" onerror="this.style.display='none'"><span>Menguante</span></div>
+                  </div>
+                }
+                @case('eclipse') {
+                  <div class="eclipse-scene">
+                    <img class="eclipse-sun" src="assets/ar/sol.png" alt="Sol" onerror="this.style.display='none'">
+                    <div class="eclipse-moon" [style.background]="'radial-gradient(circle at 35% 30%, rgba(255,255,255,.58), rgba(148,163,184,.75) 32%, rgba(15,23,42,.98) 72%)'"></div>
+                    <div class="eclipse-shadow"></div>
+                    <img class="eclipse-earth" src="assets/ar/tierra.png" alt="Tierra" onerror="this.style.display='none'">
+                  </div>
+                }
+                @case('constellations') {
+                  <div class="constellation-scene">
+                    <div class="constellation-stars"></div>
+                  </div>
+                }
+              }
+            </div>
+          }
+          @if(cameraError) { <div class="ar-visor__message">{{ cameraError }}</div> }
+          <div class="ar-controls">
+            <button (click)="toggleCamera()" class="ar-control-btn" [title]="cameraActive ? 'Apagar cámara' : 'Encender cámara'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            </button>
+            <button (click)="toggleModelVisibility()" class="ar-control-btn" [title]="modelVisible ? 'Ocultar modelo' : 'Mostrar modelo'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+            <button (click)="centerArModel()" class="ar-control-btn" title="Centrar modelo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+            </button>
+            <button (click)="increaseArScale()" class="ar-control-btn" title="Acercar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </button>
+            <button (click)="decreaseArScale()" class="ar-control-btn" title="Alejar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </button>
+            @if(selectedArExperience.modelType === 'solar-system') {
+              <button (click)="toggleOrbits()" class="ar-control-btn" [title]="showOrbits ? 'Ocultar órbitas' : 'Mostrar órbitas'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg>
+              </button>
+              <button (click)="toggleSolarMotion()" class="ar-control-btn" [title]="solarMotion ? 'Pausar movimiento' : 'Activar movimiento'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </button>
+            }
+            @if(selectedArExperience.modelType === 'solar-system' || selectedArExperience.modelType === 'planets' || selectedArExperience.modelType === 'milky-way') {
+              <button (click)="toggleLabels()" class="ar-control-btn" [title]="showLabels ? 'Ocultar etiquetas' : 'Mostrar etiquetas'">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="ar-section">
+          <p class="ar-section__desc">{{ selectedArExperience.description }}</p>
+        </div>
+
+        <div class="ar-section">
+          <h4>{{ t()['preguntasEducativas'] || 'Preguntas educativas' }}</h4>
+          <div class="ar-questions">
+            @for(q of selectedArExperience.questions; track $index; let i = $index) {
+              <div class="ar-question">
+                <p><strong>{{ i + 1 }}.</strong> {{ q }}</p>
+                <input [(ngModel)]="arAnswers[i]" [placeholder]="(t()['escribeRespuesta'] || 'Escribe tu respuesta') + '...'" class="ar-input">
+              </div>
+            }
+          </div>
+          <button (click)="submitArAnswers()" class="ar-submit-btn">{{ t()['enviarRespuestas'] || 'Enviar respuestas' }}</button>
+          @if(arSubmitted) {
+            <div class="ar-feedback">
+              <p>{{ t()['respuestasEnviadas'] || '¡Respuestas enviadas! Revisa tus respuestas con tu docente.' }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
