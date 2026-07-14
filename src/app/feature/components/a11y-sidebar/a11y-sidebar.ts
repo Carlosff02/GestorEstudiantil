@@ -49,7 +49,8 @@ export class A11ySidebar {
     if (
       this.prefs.sidebarAbierto() &&
       !target.closest('.a11y-sidebar') &&
-      !target.closest('.a11y-trigger')
+      !target.closest('.a11y-trigger') &&
+      !target.closest('.a11y-fab')
     ) {
       this.prefs.cerrarSidebar();
     }
